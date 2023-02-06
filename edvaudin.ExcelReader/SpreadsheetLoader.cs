@@ -1,11 +1,5 @@
 ﻿using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace edvaudin.ExcelReader
 {
@@ -21,35 +15,34 @@ namespace edvaudin.ExcelReader
 
             var ws = package.Workbook.Worksheets[0];
 
-            int row = 1;
-            int col = 1;
+            CreateIdColumn(output, ws);
 
-            while (string.IsNullOrWhiteSpace(ws.Cells[row, col].Value?.ToString()) == false)
-            {
-                row++;
-            }
+            SetIdColumnAsPK(output);
+
+            DataSet set = new();
+            set.Tables.Add(output);
+
+            AddRows(output, ws);
+
+            return output;
+        }
+
+        private static void SetIdColumnAsPK(DataTable output)
+        {
+            DataColumn[] PrimaryKeyColumns = new DataColumn[1];
+            PrimaryKeyColumns[0] = output.Columns["id"];
+            output.PrimaryKey = PrimaryKeyColumns;
+        }
+
+        private static void CreateIdColumn(DataTable output, ExcelWorksheet ws)
+        {
             DataColumn column = new();
-
-            // Create Id column
-            column = new DataColumn();
             column.DataType = System.Type.GetType("System.Int32");
             column.ColumnName = "Id";
             column.ReadOnly = true;
             column.Unique = true;
             output.Columns.Add(column);
             SetupDataTableColumns(output, ws);
-
-            // Set Id Column as primary key
-            DataColumn[] PrimaryKeyColumns = new DataColumn[1];
-            PrimaryKeyColumns[0] = output.Columns["id"];
-            output.PrimaryKey = PrimaryKeyColumns;
-
-            DataSet set = new DataSet();
-            set.Tables.Add(output);
-
-            AddRows(output, ws);
-
-            return output;
         }
 
         private static void SetupDataTableColumns(DataTable input, ExcelWorksheet ws)
@@ -86,7 +79,6 @@ namespace edvaudin.ExcelReader
                 foreach (DataColumn dataColumn in input.Columns)
                 {
                     int index = input.Columns.IndexOf(dataColumn) + 1;
-                    Console.WriteLine($"Attempting to assign the value of {dataColumn.ColumnName} to row {row} column {index}. Is it unique? {dataColumn.Unique}");
                     dataRow[dataColumn.ColumnName] = dataColumn.Unique == true ? int.Parse(ws.Cells[row, index].Value.ToString()) : ws.Cells[row, index].Value.ToString();
                 }
                 row++;

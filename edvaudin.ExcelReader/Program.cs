@@ -1,30 +1,32 @@
 ﻿using OfficeOpenXml;
-using System.Data;
 
 namespace edvaudin.ExcelReader
 {
     internal class Program
     {
+        private static readonly DbFactory dbFactory = new();
         static async Task Main(string[] args)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            var file = new FileInfo(@"C:\Users\Ed\Demo.xlsx");
+            var file = new FileInfo("Demo.xlsx");
+
             Console.WriteLine("Loading excel file into DataTable from: " + file.FullName);
             var table = await SpreadsheetLoader.LoadExcelFile(file);
 
-            foreach (DataRow dataRow in table.Rows)
-            {
-                foreach (var item in dataRow.ItemArray)
-                {
-                    Console.WriteLine(item);
-                }
-            }
-        }
+            Console.WriteLine("Deleting pre-existing database...");
+            dbFactory.DropExistingDataBase();
 
+            Console.WriteLine("Creating new database...");
+            dbFactory.CreateNewDatabase();
 
-        private static void DeleteIfExists(FileInfo file)
-        {
-            if (file.Exists) { file.Delete(); }
+            Console.WriteLine("Transferring DataTable structure to database...");
+            dbFactory.CreateTable(table);
+
+            Console.WriteLine("Transferring DataTable contents to database...");
+            dbFactory.InsertIntoTable(table);
+
+            Console.WriteLine("Data transfer from Excel to SQL Server complete\n");
+            dbFactory.DisplayTable();
         }
     }
 }
