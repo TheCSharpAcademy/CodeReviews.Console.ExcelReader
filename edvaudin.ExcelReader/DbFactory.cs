@@ -21,7 +21,7 @@ internal class DbFactory
     {
         using var conn = new SqlConnection(connectionString);
         conn.Open();
-        string sql = "DROP DATABASE exceldb";
+        string sql = "DROP DATABASE IF EXISTS exceldb";
         SqlCommand cmd = new(sql, conn);
         cmd.ExecuteNonQuery();
     }
@@ -93,7 +93,6 @@ internal class DbFactory
                 case "System.Int32":
                     stringBuilder.Append(" int ");
                     break;
-                case "System.String":
                 default:
                     stringBuilder.Append(string.Format(" nvarchar({0}) ", table.Columns[i].MaxLength == -1 ? "max" : table.Columns[i].MaxLength.ToString()));
                     break;
