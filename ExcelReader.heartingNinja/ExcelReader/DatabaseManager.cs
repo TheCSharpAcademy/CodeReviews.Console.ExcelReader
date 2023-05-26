@@ -14,22 +14,22 @@ public class Player
     public int Doubles { get; set; }
     public int Triples { get; set; }
     public int HR { get; set; }
-    public int RBI { get; set; }
+    public int Rbi { get; set; }
     public int SB { get; set; }
     public int CS { get; set; }
     public int BB { get; set; }
     public int SO { get; set; }
     public decimal BA { get; set; }
-    public decimal OBP { get; set; }
-    public decimal SLG { get; set; }
-    public decimal OPS { get; set; }
-    public int OPSPlus { get; set; }
+    public decimal Obp { get; set; }
+    public decimal Slg { get; set; }
+    public decimal Ops { get; set; }
+    public int OpsPlus { get; set; }
     public int TB { get; set; }
-    public int GDP { get; set; }
-    public int HBP { get; set; }
+    public int Gdp { get; set; }
+    public int Hbp { get; set; }
     public int SH { get; set; }
     public int SF { get; set; }
-    public int IBB { get; set; }
+    public int Ibb { get; set; }
 }
 
 public class DatabaseManager
@@ -79,22 +79,22 @@ public class DatabaseManager
                     command.Parameters.AddWithValue("@Doubles", player.Doubles);
                     command.Parameters.AddWithValue("@Triples", player.Triples);
                     command.Parameters.AddWithValue("@HR", player.HR);
-                    command.Parameters.AddWithValue("@RBI", player.RBI);
+                    command.Parameters.AddWithValue("@RBI", player.Rbi);
                     command.Parameters.AddWithValue("@SB", player.SB);
                     command.Parameters.AddWithValue("@CS", player.CS);
                     command.Parameters.AddWithValue("@BB", player.BB);
                     command.Parameters.AddWithValue("@SO", player.SO);
                     command.Parameters.AddWithValue("@BA", player.BA);
-                    command.Parameters.AddWithValue("@OBP", player.OBP);
-                    command.Parameters.AddWithValue("@SLG", player.SLG);
-                    command.Parameters.AddWithValue("@OPS", player.OPS);
-                    command.Parameters.AddWithValue("@OPSPlus", player.OPSPlus);
+                    command.Parameters.AddWithValue("@OBP", player.Obp);
+                    command.Parameters.AddWithValue("@SLG", player.Slg);
+                    command.Parameters.AddWithValue("@OPS", player.Ops);
+                    command.Parameters.AddWithValue("@OPSPlus", player.OpsPlus);
                     command.Parameters.AddWithValue("@TB", player.TB);
-                    command.Parameters.AddWithValue("@GDP", player.GDP);
-                    command.Parameters.AddWithValue("@HBP", player.HBP);
+                    command.Parameters.AddWithValue("@GDP", player.Gdp);
+                    command.Parameters.AddWithValue("@HBP", player.Hbp);
                     command.Parameters.AddWithValue("@SH", player.SH);
                     command.Parameters.AddWithValue("@SF", player.SF);
-                    command.Parameters.AddWithValue("@IBB", player.IBB);
+                    command.Parameters.AddWithValue("@IBB", player.Ibb);
                     command.ExecuteNonQuery();
                 }
             }
@@ -133,22 +133,22 @@ public class DatabaseManager
                             Doubles = reader.GetInt32(9),
                             Triples = reader.GetInt32(10),
                             HR = reader.GetInt32(11),
-                            RBI = reader.GetInt32(12),
+                            Rbi = reader.GetInt32(12),
                             SB = reader.GetInt32(13),
                             CS = reader.GetInt32(14),
                             BB = reader.GetInt32(15),
                             SO = reader.GetInt32(16),
                             BA = reader.GetDecimal(17),
-                            OBP = reader.GetDecimal(18),
-                            SLG = reader.GetDecimal(19),
-                            OPS = reader.GetDecimal(20),
-                            OPSPlus = reader.GetInt32(21),
+                            Obp = reader.GetDecimal(18),
+                            Slg = reader.GetDecimal(19),
+                            Ops = reader.GetDecimal(20),
+                            OpsPlus = reader.GetInt32(21),
                             TB = reader.GetInt32(22),
-                            GDP = reader.GetInt32(23),
-                            HBP = reader.GetInt32(24),
+                            Gdp = reader.GetInt32(23),
+                            Hbp = reader.GetInt32(24),
                             SH = reader.GetInt32(25),
                             SF = reader.GetInt32(26),
-                            IBB = reader.GetInt32(27)
+                            Ibb = reader.GetInt32(27)
                         };
 
                         players.Add(player);

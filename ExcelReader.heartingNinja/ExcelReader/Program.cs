@@ -20,7 +20,7 @@ class Program
 
         foreach (var player in fetchedPlayers)
         {
-            Console.WriteLine($"{player.Rk}\t{player.Pos}\t{player.Name.PadRight(25)}\t{player.Age}\t{player.G}\t{player.PA}\t{player.AB}\t{player.R}\t{player.H}\t{player.Doubles}\t{player.Triples}\t{player.HR}\t{player.RBI}\t{player.SB}\t{player.CS}\t{player.BB}\t{player.SO}\t{player.BA}\t{player.OBP}\t{player.SLG}\t{player.OPS}\t{player.OPSPlus}\t{player.TB}\t{player.GDP}\t{player.HBP}\t{player.SH}\t{player.SF}\t{player.IBB}");
+            Console.WriteLine($"{player.Rk}\t{player.Pos}\t{player.Name.PadRight(25)}\t{player.Age}\t{player.G}\t{player.PA}\t{player.AB}\t{player.R}\t{player.H}\t{player.Doubles}\t{player.Triples}\t{player.HR}\t{player.Rbi}\t{player.SB}\t{player.CS}\t{player.BB}\t{player.SO}\t{player.BA}\t{player.Obp}\t{player.Slg}\t{player.Ops}\t{player.OpsPlus}\t{player.TB}\t{player.Gdp}\t{player.Hbp}\t{player.SH}\t{player.SF}\t{player.Ibb}");
         }
 
         Console.WriteLine("Press any key to exit...");
@@ -51,22 +51,22 @@ class Program
                     Doubles = GetIntValue(worksheet.Cells[row, 10]),
                     Triples = GetIntValue(worksheet.Cells[row, 11]),
                     HR = GetIntValue(worksheet.Cells[row, 12]),
-                    RBI = GetIntValue(worksheet.Cells[row, 13]),
+                    Rbi = GetIntValue(worksheet.Cells[row, 13]),
                     SB = GetIntValue(worksheet.Cells[row, 14]),
                     CS = GetIntValue(worksheet.Cells[row, 15]),
                     BB = GetIntValue(worksheet.Cells[row, 16]),
                     SO = GetIntValue(worksheet.Cells[row, 17]),
                     BA = GetDecimalValue(worksheet.Cells[row, 18]),
-                    OBP = GetDecimalValue(worksheet.Cells[row, 19]),
-                    SLG = GetDecimalValue(worksheet.Cells[row, 20]),
-                    OPS = GetDecimalValue(worksheet.Cells[row, 21]),
-                    OPSPlus = GetIntValue(worksheet.Cells[row, 22]),
+                    Obp = GetDecimalValue(worksheet.Cells[row, 19]),
+                    Slg = GetDecimalValue(worksheet.Cells[row, 20]),
+                    Ops = GetDecimalValue(worksheet.Cells[row, 21]),
+                    OpsPlus = GetIntValue(worksheet.Cells[row, 22]),
                     TB = GetIntValue(worksheet.Cells[row, 23]),
-                    GDP = GetIntValue(worksheet.Cells[row, 24]),
-                    HBP = GetIntValue(worksheet.Cells[row, 25]),
+                    Gdp = GetIntValue(worksheet.Cells[row, 24]),
+                    Hbp = GetIntValue(worksheet.Cells[row, 25]),
                     SH = GetIntValue(worksheet.Cells[row, 26]),
                     SF = GetIntValue(worksheet.Cells[row, 27]),
-                    IBB = GetIntValue(worksheet.Cells[row, 28])
+                    Ibb = GetIntValue(worksheet.Cells[row, 28])
                 };
 
                 players.Add(player);
