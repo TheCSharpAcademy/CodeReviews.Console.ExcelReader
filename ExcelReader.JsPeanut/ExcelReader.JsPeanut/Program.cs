@@ -112,7 +112,6 @@ Id INT IDENTITY(1,1) PRIMARY KEY{columnsToAdd})", connection))
                 string rowString = "";
                 for (int j = 0; j < columnCount; j++)
                 {
-                    var columnToAdd = columns[j];
                     var rowToAdd = worksheet.Cells[l, j + 1].Value;
                     if (rowString == "")
                     {
