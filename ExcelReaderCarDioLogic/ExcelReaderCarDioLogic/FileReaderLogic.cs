@@ -9,7 +9,6 @@ internal class FileReaderLogic
         Console.WriteLine("Reading the file...");
         Thread.Sleep(1000);
 
-        //string excelPath = AppDomain.CurrentDomain.BaseDirectory + @"List.xlsx";
         Console.WriteLine(excelPath);
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -28,7 +27,6 @@ internal class FileReaderLogic
 
                     int colCount = worksheet.Dimension.Columns;
 
-                    // Read data and header from Excel
                     List<string> headers = new List<string>();
 
                     for (int col = 1; col <= colCount; col++)

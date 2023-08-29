@@ -17,7 +17,6 @@ internal class DatabaseLogic
         {
             connection.Open();
 
-            // Create a table with columns matching Excel columns
             foreach (var header in headers)
             {
                 createTableQuery += $"{header} NVARCHAR(MAX), ";
@@ -33,7 +32,6 @@ internal class DatabaseLogic
                 Console.WriteLine($"Table '{tableName}' created successfully.");
             }
 
-            //Insert Data into table
             foreach(var row in dataRows)
             {
                 string insertDataQueryFinal = insertDataQuery;
