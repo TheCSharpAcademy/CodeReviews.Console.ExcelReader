@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelReaderCarDioLogic", "ExcelReaderCarDioLogic\ExcelReaderCarDioLogic.csproj", "{BFC42E33-5C7E-4D46-A36B-3B25CB1B40EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFC42E33-5C7E-4D46-A36B-3B25CB1B40EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFC42E33-5C7E-4D46-A36B-3B25CB1B40EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFC42E33-5C7E-4D46-A36B-3B25CB1B40EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFC42E33-5C7E-4D46-A36B-3B25CB1B40EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D336140C-F86F-4009-AF27-A0F07C809C0C}
+	EndGlobalSection
+EndGlobal
