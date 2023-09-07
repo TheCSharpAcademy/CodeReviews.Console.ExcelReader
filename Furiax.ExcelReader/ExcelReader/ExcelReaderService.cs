@@ -46,8 +46,11 @@ namespace ExcelReader
 			return output;
 		}
 
-		internal static void PrintTable(List<EmployeeModel> employees)
+		internal static void PrintTable()
 		{
+			using var db = new ExcelReaderContext();
+			var employeeList = db.Employees.ToList();
+
 			var table = new Table();
 			table.AddColumn("EmployeeId");
 			table.AddColumn("Name");
@@ -58,7 +61,7 @@ namespace ExcelReader
 			table.AddColumn("Country");
 			table.AddColumn("City");
 
-			foreach (var employee in employees)
+			foreach (var employee in employeeList)
 			{
 				table.AddRow(employee.EmployeeId,
 					employee.Name,

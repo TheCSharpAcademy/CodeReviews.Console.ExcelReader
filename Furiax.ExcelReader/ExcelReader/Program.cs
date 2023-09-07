@@ -20,4 +20,4 @@ using (var context = new ExcelReaderContext())
 	}
 }
 
-ExcelReaderService.PrintTable(employeeList);
+ExcelReaderService.PrintTable();
