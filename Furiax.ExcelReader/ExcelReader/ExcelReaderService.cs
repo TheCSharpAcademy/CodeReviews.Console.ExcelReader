@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Spectre.Console;
+using OfficeOpenXml;
 
 namespace ExcelReader
 {
@@ -43,6 +44,33 @@ namespace ExcelReader
 				Console.WriteLine($"Something went wrong reading the Excel file: {ex.Message}");
 			}
 			return output;
+		}
+
+		internal static void PrintTable(List<EmployeeModel> employees)
+		{
+			var table = new Table();
+			table.AddColumn("EmployeeId");
+			table.AddColumn("Name");
+			table.AddColumn("Title");
+			table.AddColumn("Department");
+			table.AddColumn("Gender");
+			table.AddColumn("Age");
+			table.AddColumn("Country");
+			table.AddColumn("City");
+
+			foreach (var employee in employees)
+			{
+				table.AddRow(employee.EmployeeId,
+					employee.Name,
+					employee.Title,
+					employee.Department,
+					employee.Gender,
+					employee.Age,
+					employee.Country,
+					employee.City);
+			}
+			AnsiConsole.Write(table);
+			Console.ReadKey();
 		}
 	}
 }

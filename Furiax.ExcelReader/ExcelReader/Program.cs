@@ -19,3 +19,5 @@ using (var context = new ExcelReaderContext())
 		ExcelReaderService.AddData(employee);
 	}
 }
+
+ExcelReaderService.PrintTable(employeeList);
