@@ -7,7 +7,7 @@ namespace ExcelReader.Forser.Controllers
     {
         private readonly IExcelService _excelService;
         private readonly IUserInterface _excelUI;
-        bool isExcelDone;
+        bool isImportDone;
 
         public ExcelController(IExcelService excelService, IUserInterface excelUI)
         {
@@ -23,7 +23,7 @@ namespace ExcelReader.Forser.Controllers
 
             Console.WriteLine("Read EXCEL file and import to DB");
             ImportExcelData();
-            if(isExcelDone)
+            if(isImportDone)
             {
                 Console.WriteLine("Displaying Table from Database");
                 DisplayAllPlayers();
@@ -71,7 +71,7 @@ namespace ExcelReader.Forser.Controllers
                         }
 
                         _excelService.AddPlayers(hockeyPlayers);
-                        isExcelDone = true;
+                        isImportDone = true;
                     }
                     else
                     {
