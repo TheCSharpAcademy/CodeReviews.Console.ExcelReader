@@ -7,7 +7,7 @@ namespace ExcelReader.Forser.Controllers
     {
         private readonly IExcelService _excelService;
         private readonly IUserInterface _excelUI;
-        bool isExcelDone = false;
+        bool isExcelDone;
 
         public ExcelController(IExcelService excelService, IUserInterface excelUI)
         {
@@ -66,7 +66,7 @@ namespace ExcelReader.Forser.Controllers
                                 Age = Convert.ToInt32(workSheet.Cells[row, 12].Value),
                                 HeightFt = workSheet.Cells[row, 13].Value.ToString().Trim(),
                                 Htln = float.Parse(workSheet.Cells[row, 14].Value.ToString().Trim()),
-                                BMI = Convert.ToInt32(workSheet.Cells[row, 15].Value)
+                                Bmi = Convert.ToInt32(workSheet.Cells[row, 15].Value)
                             });
                         }
 

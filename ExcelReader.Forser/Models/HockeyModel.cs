@@ -21,6 +21,6 @@ namespace ExcelReader.Forser.Models
         public int Age { get; set; }
         public string HeightFt { get; set; }
         public float Htln { get; set; }
-        public int BMI { get; set; }
+        public int Bmi { get; set; }
     }
 }

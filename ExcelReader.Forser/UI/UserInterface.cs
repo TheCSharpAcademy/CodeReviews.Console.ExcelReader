@@ -14,7 +14,7 @@ namespace ExcelReader.Forser.UI
             {
                 playerTable.AddRow($"{hockeyPlayer.Id}", $"{hockeyPlayer.Team}", $"{hockeyPlayer.Country}", $"{hockeyPlayer.FirstName}", $"{hockeyPlayer.LastName}", $"{hockeyPlayer.Weight}", 
                     $"{DateTime.Parse(hockeyPlayer.DateOfBirth).ToShortDateString()}", $"{hockeyPlayer.HomeTown}", $"{hockeyPlayer.Provinces}", $"{hockeyPlayer.Position}", $"{hockeyPlayer.Age}", 
-                    $"{string.Format("{0:0.00}", double.Parse(hockeyPlayer.HeightFt))}", $"{hockeyPlayer.Htln}", $"{hockeyPlayer.BMI}");
+                    $"{string.Format("{0:0.00}", double.Parse(hockeyPlayer.HeightFt))}", $"{hockeyPlayer.Htln}", $"{hockeyPlayer.Bmi}");
             }
 
             AnsiConsole.Write(playerTable);
