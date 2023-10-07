@@ -3,6 +3,6 @@
     internal interface IExcelRepository
     {
         public IEnumerable<HockeyModel> GetAllPlayers();
-        public void AddPlayer(HockeyModel hockeyPlayer);
+        public void AddPlayers(IEnumerable<HockeyModel> hockeyPlayers);
     }
 }

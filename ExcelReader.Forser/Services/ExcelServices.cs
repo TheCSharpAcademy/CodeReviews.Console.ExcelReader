@@ -7,9 +7,9 @@
         {
             _excelRepository = excelRepository;
         }
-        public void AddPlayer(HockeyModel hockeyPlayer)
+        public void AddPlayers(IEnumerable<HockeyModel> hockeyPlayers)
         {
-            throw new NotImplementedException();
+            _excelRepository.AddPlayers(hockeyPlayers);
         }
         public List<HockeyModel> DisplayAllPlayers()
         {

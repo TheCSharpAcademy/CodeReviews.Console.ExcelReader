@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-
-namespace ExcelReader.Forser.Context
+﻿namespace ExcelReader.Forser.Context
 {
     public class ExcelContext : DbContext
     {

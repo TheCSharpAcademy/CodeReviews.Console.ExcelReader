@@ -12,8 +12,9 @@ namespace ExcelReader.Forser.UI
 
             foreach (HockeyModel hockeyPlayer in hockeyPlayers)
             {
-                playerTable.AddRow($"{hockeyPlayer.Id}", $"{hockeyPlayer.Team}", $"{hockeyPlayer.Country}", $"{hockeyPlayer.FirstName}", $"{hockeyPlayer.LastName}", $"{hockeyPlayer.Weight}", $"{hockeyPlayer.DateOfBirth}", $"{hockeyPlayer.HomeTown}", 
-                    $"{hockeyPlayer.Provinces}", $"{hockeyPlayer.Position}", $"{hockeyPlayer.Age}", $"{hockeyPlayer.HeightFt}", $"{hockeyPlayer.Htln}", $"{hockeyPlayer.BMI}");
+                playerTable.AddRow($"{hockeyPlayer.Id}", $"{hockeyPlayer.Team}", $"{hockeyPlayer.Country}", $"{hockeyPlayer.FirstName}", $"{hockeyPlayer.LastName}", $"{hockeyPlayer.Weight}", 
+                    $"{DateTime.Parse(hockeyPlayer.DateOfBirth).ToShortDateString()}", $"{hockeyPlayer.HomeTown}", $"{hockeyPlayer.Provinces}", $"{hockeyPlayer.Position}", $"{hockeyPlayer.Age}", 
+                    $"{string.Format("{0:0.00}", double.Parse(hockeyPlayer.HeightFt))}", $"{hockeyPlayer.Htln}", $"{hockeyPlayer.BMI}");
             }
 
             AnsiConsole.Write(playerTable);

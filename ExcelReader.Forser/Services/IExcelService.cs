@@ -2,7 +2,7 @@
 {
     internal interface IExcelService
     {
-        void AddPlayer(HockeyModel hockeyPlayer);
+        void AddPlayers(IEnumerable<HockeyModel> hockeyPlayers);
         List<HockeyModel> DisplayAllPlayers();
     }
 }
