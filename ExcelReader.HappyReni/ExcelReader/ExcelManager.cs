@@ -21,10 +21,10 @@ namespace ExcelReader
             Add();
         }
 
-        private bool DeleteDB()
+        private void DeleteDB()
         {
             Console.WriteLine("Database deleted.");
-            return _service._context.Database.EnsureDeleted();
+            _service._context.Database.EnsureDeleted();
         }
 
         private void CreateDB()
@@ -39,7 +39,6 @@ namespace ExcelReader
             using (var package = new ExcelPackage(new FileInfo("file.xlsx")))
             {
                 var worksheet = package.Workbook.Worksheets["Sheet1"];
-                var colCount = worksheet.Dimension.End.Column;
                 var rowCount = worksheet.Dimension.End.Row;
                 var res = new List<ExcelModel>();
 
