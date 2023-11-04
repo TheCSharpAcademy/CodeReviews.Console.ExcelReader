@@ -1,4 +1,5 @@
-﻿using ExcelReader.Models;
+﻿using ConsoleTableExt;
+using ExcelReader.Models;
 using OfficeOpenXml;
 
 namespace ExcelReader
@@ -7,9 +8,11 @@ namespace ExcelReader
     {
         public ExcelService _service;
         private List<ExcelModel> _excelModels;
+        private string _relativePath;
         public ExcelManager()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            GetPath();
             _service = new ExcelService(new ExcelContext());
             if (_service._context.Database.CanConnect())
             {
@@ -17,8 +20,30 @@ namespace ExcelReader
                 DeleteDB();
             }
             CreateDB();
-            _excelModels = Read();
+            Read();
             Add();
+            Show();
+        }
+
+        public void GetPath()
+        {
+            try
+            {
+                string exePath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                _relativePath = Path.Combine(exePath, "file.xlsx");
+
+                if (!File.Exists(_relativePath))
+                {
+                    throw new Exception("No File!");
+                }
+                Console.WriteLine("Excel file path : " + _relativePath);
+            }
+            catch
+            {
+                Console.WriteLine("No excel file found. Quitting...");
+                Environment.Exit(0);
+            }
+
         }
 
         private void DeleteDB()
@@ -33,10 +58,10 @@ namespace ExcelReader
             _service._context.Database.EnsureCreated();
         }
 
-        public List<ExcelModel> Read()
+        public void Read()
         {
             Console.WriteLine("Reading data from Excel File ...");
-            using (var package = new ExcelPackage(new FileInfo("file.xlsx")))
+            using (var package = new ExcelPackage(new FileInfo(_relativePath)))
             {
                 var worksheet = package.Workbook.Worksheets["Sheet1"];
                 var rowCount = worksheet.Dimension.End.Row;
@@ -51,12 +76,29 @@ namespace ExcelReader
                     res.Add(new ExcelModel { Name = name, Age = age, Job = job, Address = address });
                 }
                 Console.WriteLine("Done Reading!");
-                return res;
+                _excelModels = res;
             }
         }
         public void Add()
         {
             _service.Create(_excelModels);
+        }
+
+        public void Show()
+        {
+            Console.WriteLine("Making the data into table ...");
+            List<List<object>> data = _excelModels.Select(e => new List<object>
+                                     {
+                                         e.Name,
+                                         e.Age,
+                                         e.Job,
+                                         e.Address
+                                     }).ToList();
+            ConsoleTableBuilder
+                .From(data)
+                .WithColumn("Name", "Age", "Job", "Address")
+                .ExportAndWriteLine();
+
         }
     }
 }
