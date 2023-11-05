@@ -1,5 +1,7 @@
 ﻿using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
+using ConsoleTableExt;
 using Dapper;
 using ExcelReader.wkktoria.Model;
 using OfficeOpenXml;
@@ -12,12 +14,12 @@ public static class Program
     {
         var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        Console.Write("Enter path to .xlsx file: ");
+        Console.Write("Enter absolute path to .xlsx file: ");
         var filePath = Console.ReadLine();
 
         if (!new FileInfo(filePath!).Exists)
         {
-            Console.WriteLine("File doesn't exist!");
+            Console.WriteLine($"Couldn't find file: {filePath}");
             return;
         }
 
@@ -26,6 +28,8 @@ public static class Program
         var data = ReadFromExcel(file);
 
         CreateTables(connectionString, data);
+
+        ShowDatabaseData(connectionString);
     }
 
     private static List<Data> ReadFromExcel(FileInfo file)
@@ -103,5 +107,38 @@ public static class Program
                                                     INSERT INTO Data({columnsString}) VALUES({value});
                                                     """))
             connection.Execute(sql);
+    }
+
+    private static void ShowDatabaseData(string connectionString)
+    {
+        using var connection = new SqlConnection(connectionString);
+
+        var reader = connection.ExecuteReader("""
+                                              Use ExcelData;
+
+                                              Select * FROM Data;
+                                              """);
+
+        var table = new DataTable();
+        table.Load(reader);
+
+        var tableData = new List<List<object>>();
+        var columns = new List<string>();
+
+        foreach (DataColumn col in table.Columns) columns.Add(col.ColumnName);
+
+        foreach (DataRow row in table.Rows)
+        {
+            var rowData = new List<object>();
+
+            foreach (DataColumn col in table.Columns) rowData.Add(row[col]);
+
+            tableData.Add(rowData);
+        }
+
+        ConsoleTableBuilder
+            .From(tableData)
+            .WithColumn(columns)
+            .ExportAndWriteLine();
     }
 }
