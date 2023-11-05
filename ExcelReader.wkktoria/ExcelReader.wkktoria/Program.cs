@@ -5,6 +5,7 @@ using ConsoleTableExt;
 using Dapper;
 using ExcelReader.wkktoria.Model;
 using OfficeOpenXml;
+using Spectre.Console;
 
 namespace ExcelReader.wkktoria;
 
@@ -14,8 +15,31 @@ public static class Program
     {
         var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        Console.Write("Enter absolute path to .xlsx file: ");
-        var filePath = Console.ReadLine();
+        string? filePath = null;
+
+        if (AnsiConsole.Confirm("Do you want to use one of pre-created spreadsheets?"))
+        {
+            var path = Path.GetDirectoryName(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)
+                ?.Parent?.Parent?.Parent?
+                .FullName);
+
+            var spreadsheet = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("Choose spreadsheet:")
+                .AddChoices("Programming Languages", "Employee Data"));
+
+            filePath = spreadsheet switch
+            {
+                "Programming Languages" => $"{path}/ProgrammingLanguages.xlsx",
+                "Employee Data" => $"{path}/EmployeeSampleData.xlsx",
+                _ => filePath
+            };
+        }
+        else
+        {
+            Console.Write("Enter absolute path to .xlsx file: ");
+            filePath = Console.ReadLine();
+        }
+
 
         if (!new FileInfo(filePath!).Exists)
         {
@@ -122,19 +146,10 @@ public static class Program
         var table = new DataTable();
         table.Load(reader);
 
-        var tableData = new List<List<object>>();
-        var columns = new List<string>();
+        var columns = (from DataColumn col in table.Columns select col.ColumnName).ToList();
 
-        foreach (DataColumn col in table.Columns) columns.Add(col.ColumnName);
-
-        foreach (DataRow row in table.Rows)
-        {
-            var rowData = new List<object>();
-
-            foreach (DataColumn col in table.Columns) rowData.Add(row[col]);
-
-            tableData.Add(rowData);
-        }
+        var tableData = (from DataRow row in table.Rows
+            select (from DataColumn col in table.Columns select row[col]).ToList()).ToList();
 
         ConsoleTableBuilder
             .From(tableData)
