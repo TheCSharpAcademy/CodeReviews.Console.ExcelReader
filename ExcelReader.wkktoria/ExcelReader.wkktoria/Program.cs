@@ -86,12 +86,11 @@ public static class Program
     {
         AnsiConsole.MarkupLine("[yellow]Creating tables...[/]");
 
+        CleanUpDatabase(connectionString);
+
         using var connection = new SqlConnection(connectionString);
 
         connection.Execute("""
-                           DROP DATABASE ExcelData;
-                           CREATE DATABASE ExcelData;
-
                            USE ExcelData;
 
                            CREATE TABLE Data(Id INT IDENTITY(1,1) PRIMARY KEY);
@@ -129,6 +128,24 @@ public static class Program
                                                     INSERT INTO Data({columnsString}) VALUES({value});
                                                     """))
             connection.Execute(sql);
+
+        connection.Close();
+    }
+
+    private static void CleanUpDatabase(string connectionString)
+    {
+        AnsiConsole.MarkupLine("[yellow]Creating tables...[/]");
+
+        using var connection = new SqlConnection(connectionString);
+
+        connection.Execute("""
+                           IF DB_ID('ExcelData') IS NOT NULL
+                            DROP DATABASE ExcelData;
+                            
+                           CREATE DATABASE ExcelData;
+                           """);
+
+        connection.Close();
     }
 
     private static void ShowDatabaseData(string connectionString)
@@ -143,6 +160,8 @@ public static class Program
 
         var table = new DataTable();
         table.Load(reader);
+
+        connection.Close();
 
         var columns = (from DataColumn col in table.Columns select col.ColumnName).ToList();
 
