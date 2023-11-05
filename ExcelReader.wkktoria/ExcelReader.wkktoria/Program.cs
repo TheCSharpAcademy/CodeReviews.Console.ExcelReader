@@ -17,7 +17,7 @@ public static class Program
 
         string? filePath = null;
 
-        if (AnsiConsole.Confirm("Do you want to use one of pre-created spreadsheets?"))
+        if (AnsiConsole.Confirm("Do you want to use one of default spreadsheets?"))
         {
             var path = Path.GetDirectoryName(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)
                 ?.Parent?.Parent?.Parent?
@@ -36,14 +36,13 @@ public static class Program
         }
         else
         {
-            Console.Write("Enter absolute path to .xlsx file: ");
-            filePath = Console.ReadLine();
+            filePath = AnsiConsole.Ask<string>("Enter absolute path to .xlsx file:");
         }
 
 
         if (!new FileInfo(filePath!).Exists)
         {
-            Console.WriteLine($"Couldn't find file: {filePath}");
+            AnsiConsole.MarkupLineInterpolated($"[red]Couldn't find file: {filePath}[/]");
             return;
         }
 
@@ -58,7 +57,7 @@ public static class Program
 
     private static List<Data> ReadFromExcel(FileInfo file)
     {
-        Console.WriteLine("Reading data from Excel...");
+        AnsiConsole.MarkupLine("[yellow]Reading data from spreadsheet...[/]");
 
         var data = new List<Data>();
 
@@ -85,7 +84,7 @@ public static class Program
 
     private static void CreateTables(string connectionString, List<Data> data)
     {
-        Console.WriteLine("Creating tables...");
+        AnsiConsole.MarkupLine("[yellow]Creating tables...[/]");
 
         using var connection = new SqlConnection(connectionString);
 
