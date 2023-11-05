@@ -76,7 +76,6 @@ public static class Program
             data.Add(new Data
             {
                 RowNum = row,
-                ColNum = col,
                 Value = value
             });
         }
