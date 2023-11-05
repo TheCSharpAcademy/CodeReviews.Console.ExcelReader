@@ -87,27 +87,17 @@ public static class Program
         AnsiConsole.MarkupLine("[yellow]Creating tables...[/]");
 
         CleanUpDatabase(connectionString);
+        CreateDatabase(connectionString);
 
         using var connection = new SqlConnection(connectionString);
 
-        connection.Execute("""
-                           USE ExcelData;
-
-                           CREATE TABLE Data(Id INT IDENTITY(1,1) PRIMARY KEY);
-                           """);
 
         var columns = data.FindAll(d => d.RowNum == 1).Select(d => d.Value).ToList();
         for (var i = 0; i < columns.Count; i++) columns[i] = $"[{columns[i]}]";
+
+        CreateDatabaseColumns(connectionString, columns);
+
         var columnsString = string.Join(",", columns);
-
-        foreach (var sql in columns.Select(column => $"""
-                                                      USE ExcelData;
-
-                                                      IF COL_LENGTH('[Data]', '{column}') IS NULL
-                                                       ALTER TABLE Data
-                                                       ADD {column} TEXT;
-                                                      """))
-            connection.Execute(sql);
 
         var rowCount = data.Select(d => d.RowNum).Max() - 1;
 
@@ -122,46 +112,135 @@ public static class Program
             values.Add(string.Join(",", rowValues));
         }
 
-        foreach (var sql in values.Select(value => $"""
-                                                    USE ExcelData;
-
-                                                    INSERT INTO Data({columnsString}) VALUES({value});
-                                                    """))
-            connection.Execute(sql);
+        InsertDataIntoDatabase(connectionString, values, columnsString);
 
         connection.Close();
+    }
+
+    private static void CreateDatabase(string connectionString)
+    {
+        using var connection = new SqlConnection(connectionString);
+
+        try
+        {
+            connection.Execute("""
+                               USE ExcelData;
+
+                               CREATE TABLE Data(Id INT IDENTITY(1,1) PRIMARY KEY);
+                               """);
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]Couldn't create database: {e.Message}[/]");
+        }
+        finally
+        {
+            if (connection.State == ConnectionState.Open) connection.Close();
+        }
+    }
+
+    private static void CreateDatabaseColumns(string connectionString, IEnumerable<string?> columns)
+    {
+        using var connection = new SqlConnection(connectionString);
+
+        try
+        {
+            foreach (var sql in columns.Select(column => $"""
+                                                          USE ExcelData;
+
+                                                          IF COL_LENGTH('[Data]', '{column}') IS NULL
+                                                           ALTER TABLE Data
+                                                           ADD {column} TEXT;
+                                                          """))
+                connection.Execute(sql);
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]Couldn't create database columns: {e.Message}[/]");
+        }
+        finally
+        {
+            if (connection.State == ConnectionState.Open) connection.Close();
+        }
+    }
+
+    private static void InsertDataIntoDatabase(string connectionString, IEnumerable<string> values,
+        string columnsString)
+    {
+        using var connection = new SqlConnection(connectionString);
+
+        try
+        {
+            foreach (var sql in values.Select(value => $"""
+                                                        USE ExcelData;
+
+                                                        INSERT INTO Data({columnsString}) VALUES({value});
+                                                        """))
+                connection.Execute(sql);
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]Couldn't insert data into database: {e.Message}[/]");
+        }
+        finally
+        {
+            if (connection.State == ConnectionState.Open) connection.Close();
+        }
     }
 
     private static void CleanUpDatabase(string connectionString)
     {
-        AnsiConsole.MarkupLine("[yellow]Creating tables...[/]");
-
         using var connection = new SqlConnection(connectionString);
 
-        connection.Execute("""
-                           IF DB_ID('ExcelData') IS NOT NULL
-                            DROP DATABASE ExcelData;
-                            
-                           CREATE DATABASE ExcelData;
-                           """);
+        try
+        {
+            connection.Execute("""
+                               IF DB_ID('ExcelData') IS NOT NULL
+                                DROP DATABASE ExcelData;
+                                
+                               CREATE DATABASE ExcelData;
+                               """);
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]Couldn't clean up database: {e.Message}[/]");
+        }
+        finally
+        {
+            if (connection.State == ConnectionState.Open) connection.Close();
+        }
+    }
 
-        connection.Close();
+    private static DataTable CreateDataTable(string connectionString)
+    {
+        var dataTable = new DataTable();
+        using var connection = new SqlConnection(connectionString);
+
+        try
+        {
+            var reader = connection.ExecuteReader("""
+                                                  Use ExcelData;
+
+                                                  Select * FROM Data;
+                                                  """);
+
+            dataTable.Load(reader);
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]Couldn't create data table: {e.Message}[/]");
+        }
+        finally
+        {
+            if (connection.State == ConnectionState.Open) connection.Close();
+        }
+
+        return dataTable;
     }
 
     private static void ShowDatabaseData(string connectionString)
     {
-        using var connection = new SqlConnection(connectionString);
-
-        var reader = connection.ExecuteReader("""
-                                              Use ExcelData;
-
-                                              Select * FROM Data;
-                                              """);
-
-        var table = new DataTable();
-        table.Load(reader);
-
-        connection.Close();
+        var table = CreateDataTable(connectionString);
 
         var columns = (from DataColumn col in table.Columns select col.ColumnName).ToList();
 
