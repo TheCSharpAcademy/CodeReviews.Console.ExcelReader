@@ -39,10 +39,15 @@ public static class Program
             filePath = AnsiConsole.Ask<string>("Enter absolute path to .xlsx file:");
         }
 
-
         if (!new FileInfo(filePath!).Exists)
         {
             AnsiConsole.MarkupLineInterpolated($"[red]Couldn't find file: {filePath}[/]");
+            return;
+        }
+
+        if (!filePath!.EndsWith(".xlsx"))
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]This is not valid Excel file: {filePath}[/]");
             return;
         }
 
