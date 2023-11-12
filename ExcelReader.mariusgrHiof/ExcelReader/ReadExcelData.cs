@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 
 namespace ExcelReader.Models;
 public static class ReadExcelData
@@ -7,11 +6,6 @@ public static class ReadExcelData
     public static List<Car> Read()
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-        IConfiguration configuration = new ConfigurationBuilder()
-                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                    .AddJsonFile("appSettings.json")
-                    .Build();
 
         string file = @"Data\Cars.xlsx";
 
