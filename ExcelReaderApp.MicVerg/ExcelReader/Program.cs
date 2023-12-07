@@ -1,7 +1,5 @@
 ﻿
 using ExcelReader.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Identity.Client;
 using OfficeOpenXml;
 using System.Globalization;
 
