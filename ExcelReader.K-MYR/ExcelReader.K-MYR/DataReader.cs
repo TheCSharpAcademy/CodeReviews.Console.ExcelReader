@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using System.Data;
+using System.Runtime.InteropServices;
 
 
 namespace ExcelReader.K_MYR;
@@ -23,8 +24,14 @@ internal class DataReader
 
         Repo.CreateDatabase();
         Repo.CreateTable(ws);
-        var data = Repo.InsertDataWithOleDB(ws, file);
 
-        return data;
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return Repo.InsertDataWithOleDB(ws, file);
+        }
+        else
+        {
+            return Repo.InsertData(ws);
+        }
     }
 }

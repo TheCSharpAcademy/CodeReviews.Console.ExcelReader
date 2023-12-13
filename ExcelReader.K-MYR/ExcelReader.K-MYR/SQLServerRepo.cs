@@ -93,7 +93,7 @@ internal class SQLServerRepo
         }
     }
 
-    public void InsertData(OfficeOpenXml.ExcelWorksheet ws)
+    public System.Data.DataTable? InsertData(OfficeOpenXml.ExcelWorksheet ws)
     {
         AnsiConsole.Write(new Panel("Inserting Data Into Database...").BorderColor(Color.SpringGreen2_1));
 
@@ -112,6 +112,9 @@ internal class SQLServerRepo
 
             for (int i = 2; i <= ws.Dimension.End.Row; i++)
             {
+                if (ws.Cells[i, 1, i, Columns.Count].All(c => c.Value == null))
+                    continue;
+
                 command.Parameters[0].Value = i;
 
                 for (int x = 1; x <= Columns.Count; x++)
@@ -122,15 +125,25 @@ internal class SQLServerRepo
                 command.ExecuteNonQuery();
             }
 
+            System.Data.DataTable data = new();
+
+            command.CommandText = "SELECT * FROM  TableData";
+
+            SqlDataAdapter da = new(command);
+            da.Fill(data);
+
             AnsiConsole.Write(new Panel("Inserted Data Into Database Sucessfully").BorderColor(Color.SpringGreen2_1));
+
+            return data;
         }
         catch (Exception ex)
         {
             AnsiConsole.Write(new Panel($"[red]An Error Occured Inserting The Data Into The Database: {ex.Message}[/]").BorderColor(Color.Red));
+            return null;
         }
     }
 
-    public DataTable? InsertDataWithOleDB(OfficeOpenXml.ExcelWorksheet ws, FileInfo file)
+    public System.Data.DataTable? InsertDataWithOleDB(OfficeOpenXml.ExcelWorksheet ws, FileInfo file)
     {
         AnsiConsole.Write(new Panel("Inserting Data Into Database...").BorderColor(Color.SpringGreen2_1));
 
@@ -140,8 +153,8 @@ internal class SQLServerRepo
             using OleDbConnection OleDbConnection = new(connectionString);
             OleDbConnection.Open();
 
-            DataTable data = new();
-            data.Columns.Add("RowId", typeof(Int32));
+            System.Data.DataTable data = new();
+            var rowIdCol = data.Columns.Add("RowId", typeof(Int32));
 
             string sql = $"SELECT * FROM [{ws.Name}$] WHERE ";
             sql += string.Join("OR ", Columns.Select(x => $"[{x.Replace("_", " ")}] IS NOT NULL "));

@@ -55,10 +55,10 @@ internal class UserInterface
             {
                 var values = new List<string>()
                 {
-                    i.ToString(),
+                    (i+1).ToString(),
                 };
 
-                for (int j = 1; j < _DataReader.Repo.Columns.Count + 1; j++)
+                for (int j = 1; j < _DataReader.Repo.Columns.Count+1; j++)
                 {
                     values.Add(data.Rows[i][j]?.ToString() ?? "");
                 }
