@@ -125,7 +125,7 @@ internal class SQLServerRepo
                 command.ExecuteNonQuery();
             }
 
-            System.Data.DataTable data = new();
+            DataTable data = new();
 
             command.CommandText = "SELECT * FROM  TableData";
 
@@ -143,7 +143,7 @@ internal class SQLServerRepo
         }
     }
 
-    public System.Data.DataTable? InsertDataWithOleDB(OfficeOpenXml.ExcelWorksheet ws, FileInfo file)
+    public DataTable? InsertDataWithOleDB(OfficeOpenXml.ExcelWorksheet ws, FileInfo file)
     {
         AnsiConsole.Write(new Panel("Inserting Data Into Database...").BorderColor(Color.SpringGreen2_1));
 
@@ -153,7 +153,7 @@ internal class SQLServerRepo
             using OleDbConnection OleDbConnection = new(connectionString);
             OleDbConnection.Open();
 
-            System.Data.DataTable data = new();
+            DataTable data = new();
             var rowIdCol = data.Columns.Add("RowId", typeof(Int32));
 
             string sql = $"SELECT * FROM [{ws.Name}$] WHERE ";
