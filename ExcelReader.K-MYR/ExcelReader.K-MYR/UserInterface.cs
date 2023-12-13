@@ -14,11 +14,11 @@ internal class UserInterface
 
     public void ShowMainMenu()
     {
-        Console.Clear();
-        AnsiConsole.Write(new Panel("[springgreen2_1]Excel Data Reader[/]").BorderColor(Color.DarkOrange3_1));
-
         while (true)
         {
+            Console.Clear();
+            AnsiConsole.Write(new Panel("[springgreen2_1]Excel Data Reader[/]").BorderColor(Color.DarkOrange3_1));
+
             var selection = AnsiConsole.Prompt(new SelectionPrompt<MainMenuOptions>()
                                                     .AddChoices(Enum.GetValues(typeof(MainMenuOptions)).Cast<MainMenuOptions>()));
 

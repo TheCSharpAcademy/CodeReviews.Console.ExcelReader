@@ -47,6 +47,9 @@ internal class SQLServerRepo
     {
         AnsiConsole.Write(new Panel("Creating Database Tables....").BorderColor(Color.SpringGreen2_1));
 
+        Columns.Clear();
+        ColumnTypes.Clear();
+
         try
         {
             using var connection = new SqlConnection(ConnectionString);
