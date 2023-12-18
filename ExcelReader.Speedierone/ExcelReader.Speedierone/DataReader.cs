@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using ExcelReader.Speedierone.Model;
+﻿using ExcelReader.Speedierone.Model;
 using OfficeOpenXml;
 
 namespace ExcelReader.Speedierone
@@ -12,7 +6,8 @@ namespace ExcelReader.Speedierone
     public class DataReader
     {
         public static List<Orders> GetOrders()
-        {          
+        {
+                Console.WriteLine("Reading excel table...");
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                 List<Orders> order = new List<Orders>();
@@ -26,16 +21,18 @@ namespace ExcelReader.Speedierone
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
-                    int colOrderDate = 1;
-                    int colRegion = 2;
-                    int colRep = 3;
-                    int colItem = 4;
-                    int colUnits = 5;
-                    int colUnitCost = 6;
-                    int colTotal = 7;
+                    int colOrderId = 1;
+                    int colOrderDate = 2;
+                    int colRegion = 3;
+                    int colRep = 4;
+                    int colItem = 5;
+                    int colUnits = 6;
+                    int colUnitCost = 7;
+                    int colTotal = 8;
 
                     for (int i = 2; i < worksheet.Dimension.End.Row + 1; i++)
                     {
+                        var orderId = worksheet.Cells[i, colOrderId].Value;
                         var orderDate = worksheet.Cells[i, colOrderDate].Value;
                         var region = worksheet.Cells[i, colRegion].Value;
                         var repName = worksheet.Cells[i, colRep].Value;
@@ -46,6 +43,7 @@ namespace ExcelReader.Speedierone
 
                         order.Add(new Orders
                         {
+                            Id = Convert.ToInt32(orderId),
                             OrderDate = orderDate.ToString(),
                             Region = region.ToString(),
                             RepName = repName.ToString(),
@@ -61,7 +59,10 @@ namespace ExcelReader.Speedierone
             {
                 Console.WriteLine(ex.Message);
             }
-
+            Console.WriteLine("Checking and deleting existing data....");
+            DataInsert.DeleteExistingRecords();
+            Console.WriteLine("Creating SqlServer database....");
+            DataInsert.InsertIntoSqlServer(order);
             return order;
         }
     }

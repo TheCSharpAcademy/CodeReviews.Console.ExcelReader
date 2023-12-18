@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ExcelReader.Speedierone.Model
+﻿namespace ExcelReader.Speedierone.Model
 {
     public class Orders
     {
+        public int Id {  get; set; } 
         public string OrderDate { get; set; }
         public string Region { get; set; }
         public string RepName { get; set; }
