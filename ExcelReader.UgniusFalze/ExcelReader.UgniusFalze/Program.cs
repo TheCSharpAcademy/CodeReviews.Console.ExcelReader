@@ -1,9 +1,14 @@
 ﻿using ExcelReader.UgniusFalze.Services;
+using Microsoft.Extensions.Configuration;
 
 try
 {
+    var config = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json")
+        .Build();
     Display.DisplayStart();
-    var driver = new Driver(@"Server=(LocalDb)\MSSQLLocalDB;Integrated Security=SSPI;Trusted_Connection=yes;");
+    var driver = new Driver(config.GetConnectionString("LocalDb"));
     Display.DisplayDatabaseDrop();
     driver.DropDatabase();
     Display.DisplayDatabaseCreate();
