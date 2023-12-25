@@ -2,7 +2,7 @@
 using ExcelReader.UgniusFalze.Models;
 using Spectre.Console;
 
-namespace ExcelReader.UgniusFalze.Services;
+namespace ExcelReader.UgniusFalze.Utils;
 
 public static class Display
 {

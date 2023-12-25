@@ -1,7 +1,7 @@
 ﻿using ExcelReader.UgniusFalze.Models;
 using OfficeOpenXml;
 
-namespace ExcelReader.UgniusFalze.Services;
+namespace ExcelReader.UgniusFalze.Utils;
 
 public class FileReader : IDisposable
 {

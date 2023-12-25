@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using ExcelReader.UgniusFalze.Models;
 
-namespace ExcelReader.UgniusFalze.Services;
+namespace ExcelReader.UgniusFalze.Utils;
 
 public class Driver
 {
