@@ -6,7 +6,6 @@ internal class FileHandler
 {
     public static string SelectFile()
     {
-        bool valid = false;
         string selectedFile = "";
         string directory = AppDomain.CurrentDomain.BaseDirectory;
         List<string> files = Directory.GetFiles(directory).ToList();

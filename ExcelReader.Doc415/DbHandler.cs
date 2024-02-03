@@ -88,7 +88,6 @@ internal class DbHandler
 
     public IEnumerable<dynamic> GetDbData()
     {
-        IEnumerable<dynamic> data = new List<dynamic>();
         using var connection = new SqlConnection(_connectionString);
         string query = "SELECT * FROM exceldata";
         var command = new SqlCommand(query, connection);
