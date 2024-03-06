@@ -8,6 +8,9 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using ExcelReader.Controllers;
 
 namespace ExcelReader;
 
@@ -15,22 +18,28 @@ public class ExcelReader
 {
     public static void Main()
     {
-        dynamic test = new ExcelModel();
-
-        test.Hola = "HolaMundo";
-        test.Date = DateOnly.FromDateTime(DateTime.Today);
-        test.SetMember("Testing" , "test");
-
-        Console.WriteLine(test.Testing);
-        Console.WriteLine(test.Date.ToString("yyyy/MM/dd"));
-        Console.WriteLine(test.Hola);
-
+        IHost? app;
+        try
+        {
+            app = StartUp.AppInit();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Thread.Sleep(4000);
+            return;
+        }
+        app.Services.CreateScope()
+            .ServiceProvider.GetRequiredService<DataController>().Start();
+    }
+    public static void Test()
+    {
         var filePath = "Template.xlsx";
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         FileInfo existingFile = new(filePath);
         using ExcelPackage package = new(existingFile);
-        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+        ExcelWorksheet worksheet = package.Workbook.Worksheets.First();
 
         var ranges = worksheet.Dimension;
         List<string> properties = [];
@@ -197,10 +206,5 @@ public class ExcelReader
                 propertyInfo.SetValue(entity, entry.Value, null);
         }
         Type var2 = element2.GetType();
-
-        var excelContext = new ExcelModelContext();
-        
-        excelContext.Database.EnsureDeleted();
-        excelContext.Database.EnsureCreated();
     }
 }
