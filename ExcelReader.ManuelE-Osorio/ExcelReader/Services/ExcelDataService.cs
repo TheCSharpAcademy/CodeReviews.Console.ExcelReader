@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using OfficeOpenXml;
 using ExcelReader.Models;
 using System.Data;
@@ -23,10 +21,10 @@ public class ExcelDataService
     {
         FileInfo existingFile = new(WorkSheetPath);
         using ExcelPackage package = new(existingFile);
-        
+
         var worksheet = package.Workbook.Worksheets.First();
         var table = GetDataTableFromExcelWorksheet(worksheet);
-        
+
         ExcelWorkSheetModel worksheetModel = new()
         {
             WorkSheetName = worksheet.Name,
@@ -41,17 +39,17 @@ public class ExcelDataService
 
         var dateRanges = 
             from cell in worksheet.Cells[1, 1, 1, ranges.Columns]
-            where cell.Text.ToString().Contains("(Date)")
+            where cell.Text.ToString().Contains("(date)", StringComparison.InvariantCultureIgnoreCase)
             select cell;
 
         var intRanges = 
             from cell in worksheet.Cells[1, 1, 1, ranges.Columns]
-            where cell.Text.ToString().Contains("(Int)")
+            where cell.Text.ToString().Contains("(int)", StringComparison.InvariantCultureIgnoreCase)
             select cell;
-        
+
         var doubleRanges = 
             from cell in worksheet.Cells[1, 1, 1, ranges.Columns]
-            where cell.Text.Contains("(Double)")
+            where cell.Text.Contains("(double)", StringComparison.InvariantCultureIgnoreCase)
             select cell;
 
         return worksheet.Cells[1, 1, ranges.Rows, ranges.Columns]
@@ -64,19 +62,22 @@ public class ExcelDataService
             foreach(ExcelRangeBase cell in intRanges)
             {
                 c.Mappings.Add(cell.Start.Column + ZeroBasedOffset, 
-                    cell.Value.ToString(), typeof(int));
+                    cell.Value.ToString()?.Replace("(Int)", "", 
+                    StringComparison.InvariantCultureIgnoreCase), typeof(int));
             }
             
             foreach(ExcelRangeBase cell in doubleRanges)
             {
                 c.Mappings.Add(cell.Start.Column + ZeroBasedOffset, 
-                    cell.Value.ToString(), typeof(double));
+                    cell.Value.ToString()?.Replace("(Double)", "", 
+                    StringComparison.InvariantCultureIgnoreCase), typeof(double));
             }
 
             foreach(ExcelRangeBase cell in dateRanges)
             {
                 c.Mappings.Add(cell.Start.Column + ZeroBasedOffset, 
-                    cell.Value.ToString(), typeof(DateTime));
+                    cell.Value.ToString()?.Replace("(Date)", "", 
+                    StringComparison.InvariantCultureIgnoreCase), typeof(DateTime));
             }
         });
     }
@@ -94,45 +95,44 @@ public class ExcelDataService
                 switch(data.Rows[i][j])
                 {
                     case int:
-                        listToAdd[^1].IntRows.Add( new ExcelRowDataModel<int>
+                        listToAdd[^1].IntCells.Add( new ExcelCellData<int>
                             {
-                                RowTitle = data.Columns[j].ColumnName,
-                                RowValue = (int) data.Rows[i][j]
+                                CellTitle = data.Columns[j].ColumnName,
+                                CellValue = (int) data.Rows[i][j]
                             }
                         );
                         break;
 
                     case double:
-                        listToAdd[^1].DoubleRows.Add( new ExcelRowDataModel<double>
+                        listToAdd[^1].DoubleCells.Add( new ExcelCellData<double>
                             {
-                                RowTitle = data.Columns[j].ColumnName,
-                                RowValue = (double) data.Rows[i][j]
+                                CellTitle = data.Columns[j].ColumnName,
+                                CellValue = (double) data.Rows[i][j]
                             }
                         );
                         break;
 
                     case DateTime:
-                        listToAdd[^1].DateRows.Add( new ExcelRowDataModel<DateTime>
+                        listToAdd[^1].DateCells.Add( new ExcelCellData<DateTime>
                             {
-                                RowTitle = data.Columns[j].ColumnName,
-                                RowValue = (DateTime) data.Rows[i][j]
+                                CellTitle = data.Columns[j].ColumnName,
+                                CellValue = (DateTime) data.Rows[i][j]
                             }
                         );
                         break;
 
                     case string:
                     default:
-                        listToAdd[^1].StringRows.Add( new ExcelRowStringModel
+                        listToAdd[^1].StringCells.Add( new ExcelCellString
                             {
-                                RowTitle = data.Columns[j].ColumnName,
-                                RowValue = (string) data.Rows[i][j]
+                                CellTitle = data.Columns[j].ColumnName,
+                                CellValue = (string) data.Rows[i][j]
                             }
                         );
                         break;
                 }
             }
         }
-
         return listToAdd;
     }
 }

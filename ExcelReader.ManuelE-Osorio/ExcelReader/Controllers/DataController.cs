@@ -4,13 +4,13 @@ namespace ExcelReader.Controllers;
 
 public class DataController(ExcelWorkSheetController excelWorkSheetController, ExcelDataService excelDataService)
 {
-    private ExcelWorkSheetController ExcelControllerInstance = excelWorkSheetController;
-    private ExcelDataService ExcelDataServiceInstance = excelDataService;
+    private readonly ExcelWorkSheetController ExcelControllerInstance = excelWorkSheetController;
+    private readonly ExcelDataService ExcelDataServiceInstance = excelDataService;
     
     public void Start()
     {
-        var hola = ExcelDataServiceInstance.GetWorkSheetModel();
-        Console.WriteLine(true + "Hola");
+        var workSheetData = ExcelDataServiceInstance.GetWorkSheetModel();
+        ExcelControllerInstance.Insert(workSheetData);
         return;
     }
 }

@@ -6,10 +6,10 @@ public class ExcelModelContext(DbContextOptions<ExcelModelContext> options) : Db
 {
     public DbSet<ExcelWorkSheetModel> ExcelWorkSheet {get; set;}
     public DbSet<ExcelRowModel> ExcelRow {get; set;}
-    public DbSet<ExcelRowStringModel> StringRow {get; set;}
-    public DbSet<ExcelRowDataModel<int>> IntRow {get; set;}
-    public DbSet<ExcelRowDataModel<DateTime>> DateRow {get; set;}
-    public DbSet<ExcelRowDataModel<double>> DoubleRow {get; set;}
+    public DbSet<ExcelCellString> StringCells {get; set;}
+    public DbSet<ExcelCellData<int>> IntCells {get; set;}
+    public DbSet<ExcelCellData<DateTime>> DateCells {get; set;}
+    public DbSet<ExcelCellData<double>> DoubleCells {get; set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,10 +19,12 @@ public class ExcelModelContext(DbContextOptions<ExcelModelContext> options) : Db
             workSheet.OwnsMany(p => p.Rows, rows =>
             {
                 rows.HasKey( p => p.RowId);
-                rows.OwnsMany(p => p.StringRows);
-                rows.OwnsMany( p => p.IntRows);
-                rows.OwnsMany( p => p.DoubleRows);
-                rows.OwnsMany( p => p.DateRows);
+                rows.Property( p => p.RowId)
+                    .ValueGeneratedNever();
+                rows.OwnsMany(p => p.StringCells);
+                rows.OwnsMany( p => p.IntCells);
+                rows.OwnsMany( p => p.DoubleCells);
+                rows.OwnsMany( p => p.DateCells);
             });
         });
    }
