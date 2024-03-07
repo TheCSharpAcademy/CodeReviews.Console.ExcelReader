@@ -1,5 +1,12 @@
 # Excel Reader
 
+## To Do
+
+1. Add a WorkBook model than is able to contain multiple WorkSheets. (ExcelWorkBookModel -> ExcelWorkSheetModel -> ExcelRowModel -> ExcelCellData)
+2. Add a ExcelColumn model to map each cell to its Column Id instead of using the column title.
+3. Add more ExcelCell types.
+4. Handle null cells as null values (issue with int and double cells)
+
 ## References
 
 1. <https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/accessibility-levels>

@@ -22,7 +22,7 @@ public class StartUp
         {
             services.AddDbContext<ExcelModelContext>(options => options
                 .UseSqlServer(host.Configuration.GetConnectionString("DefaultConnection"))
-                .LogTo(Console.WriteLine));
+                .EnableSensitiveDataLogging());
 
             AppVars appVars = host.Configuration.GetSection("Settings").Get<AppVars>() ?? new AppVars();
             services.AddSingleton(appVars);
@@ -32,12 +32,6 @@ public class StartUp
             services.AddScoped<ExcelWorkSheetController>();
             services.AddScoped<DataController>();
         });
-
-        var app = appBuilder.Build();
-        var excelController = app.Services.CreateScope()
-            .ServiceProvider.GetRequiredService<ExcelWorkSheetController>();
-        excelController.TryConnection();
-
-        return app;
+        return appBuilder.Build();
     }
 }

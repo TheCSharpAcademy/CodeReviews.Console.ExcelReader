@@ -1,6 +1,7 @@
 using OfficeOpenXml;
 using ExcelReader.Models;
 using System.Data;
+using ExcelReader.UI;
 
 namespace ExcelReader.Services;
 
@@ -22,14 +23,27 @@ public class ExcelDataService
         FileInfo existingFile = new(WorkSheetPath);
         using ExcelPackage package = new(existingFile);
 
-        var worksheet = package.Workbook.Worksheets.First();
+        
+
+        MainUI.InformationMessage($"Accessing the excel worksheet at {existingFile.FullName}");
+        ExcelWorksheet worksheet;
+        try
+        {
+            worksheet = package.Workbook.Worksheets.First();
+        }
+        catch
+        {
+            throw new Exception("Cannot find the file or it doesn't contains any worksheets.");
+        }
         var table = GetDataTableFromExcelWorksheet(worksheet);
 
+        MainUI.InformationMessage("Creating the data model");
         ExcelWorkSheetModel worksheetModel = new()
         {
             WorkSheetName = worksheet.Name,
             Rows = GetRowModelFromDataTable(table)
         };
+        MainUI.InformationMessage("Data model creation succesful");
         return worksheetModel;
     }
 
@@ -56,28 +70,27 @@ public class ExcelDataService
             .ToDataTable( c =>
         {
             c.AlwaysAllowNull = true;
+            c.EmptyRowStrategy = OfficeOpenXml.Export.ToDataTable.EmptyRowsStrategy.StopAtFirst;
+            c.ExcelErrorParsingStrategy = OfficeOpenXml.Export.ToDataTable.ExcelErrorParsingStrategy.HandleExcelErrorsAsBlankCells;
             c.Mappings.Add(IdDefaultColumn, 
                 worksheet.Cells[1, IdDefaultColumn + OneBasedOffset].Text, typeof(int));
             
             foreach(ExcelRangeBase cell in intRanges)
             {
                 c.Mappings.Add(cell.Start.Column + ZeroBasedOffset, 
-                    cell.Value.ToString()?.Replace("(Int)", "", 
-                    StringComparison.InvariantCultureIgnoreCase), typeof(int));
+                    cell.Value.ToString(), typeof(int));
             }
             
             foreach(ExcelRangeBase cell in doubleRanges)
             {
                 c.Mappings.Add(cell.Start.Column + ZeroBasedOffset, 
-                    cell.Value.ToString()?.Replace("(Double)", "", 
-                    StringComparison.InvariantCultureIgnoreCase), typeof(double));
+                    cell.Value.ToString(), typeof(double));
             }
 
             foreach(ExcelRangeBase cell in dateRanges)
             {
                 c.Mappings.Add(cell.Start.Column + ZeroBasedOffset, 
-                    cell.Value.ToString()?.Replace("(Date)", "", 
-                    StringComparison.InvariantCultureIgnoreCase), typeof(DateTime));
+                    cell.Value.ToString(), typeof(DateTime));
             }
         });
     }
@@ -92,41 +105,47 @@ public class ExcelDataService
 
             for(int j = 1; j < data.Columns.Count; j++)
             {
-                switch(data.Rows[i][j])
+                var value = data.Rows[i][j];
+                if(value is DBNull)
+                    value = null;
+                    
+                switch(data.Columns[j].ColumnName)
                 {
-                    case int:
+                    case var n when n.Contains("(int)", StringComparison.InvariantCultureIgnoreCase):
                         listToAdd[^1].IntCells.Add( new ExcelCellData<int>
                             {
-                                CellTitle = data.Columns[j].ColumnName,
-                                CellValue = (int) data.Rows[i][j]
+                                CellTitle = data.Columns[j].ColumnName.Replace("(int)", "", 
+                                    StringComparison.InvariantCultureIgnoreCase),
+                                CellValue = (int?) value 
                             }
                         );
                         break;
 
-                    case double:
+                    case var n when n.Contains("(double)", StringComparison.InvariantCultureIgnoreCase):
                         listToAdd[^1].DoubleCells.Add( new ExcelCellData<double>
                             {
-                                CellTitle = data.Columns[j].ColumnName,
-                                CellValue = (double) data.Rows[i][j]
+                                CellTitle = data.Columns[j].ColumnName.Replace("(double)", "", 
+                                    StringComparison.InvariantCultureIgnoreCase),
+                                CellValue = (double?) value 
                             }
                         );
                         break;
 
-                    case DateTime:
+                    case var n when n.Contains("(date)", StringComparison.InvariantCultureIgnoreCase):
                         listToAdd[^1].DateCells.Add( new ExcelCellData<DateTime>
                             {
-                                CellTitle = data.Columns[j].ColumnName,
-                                CellValue = (DateTime) data.Rows[i][j]
+                                CellTitle = data.Columns[j].ColumnName.Replace("(date)", "", 
+                                    StringComparison.InvariantCultureIgnoreCase),
+                                CellValue = (DateTime?) value 
                             }
                         );
                         break;
 
-                    case string:
                     default:
                         listToAdd[^1].StringCells.Add( new ExcelCellString
                             {
                                 CellTitle = data.Columns[j].ColumnName,
-                                CellValue = (string) data.Rows[i][j]
+                                CellValue = (string?) value 
                             }
                         );
                         break;

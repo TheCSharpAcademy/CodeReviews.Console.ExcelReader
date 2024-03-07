@@ -32,7 +32,7 @@ public class ExcelWorkSheetRepository(ExcelModelContext dbContext): IExcelReposi
         return true;
     }
 
-    public IEnumerable<ExcelWorkSheetModel>? GetAll()
+    public IEnumerable<ExcelWorkSheetModel> GetAll()
     {
         return DbContext.ExcelWorkSheet.AsEnumerable();
     }

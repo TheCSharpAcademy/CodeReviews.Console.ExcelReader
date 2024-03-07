@@ -20,7 +20,7 @@ public class ExcelWorkSheetService(IExcelRepository<ExcelWorkSheetModel> excelRe
         }
     }
 
-    public IEnumerable<ExcelWorkSheetModel>? GetAll()
+    public IEnumerable<ExcelWorkSheetModel> GetAll()
     {
         return ExcelRepositoryInstance.GetAll();
     }

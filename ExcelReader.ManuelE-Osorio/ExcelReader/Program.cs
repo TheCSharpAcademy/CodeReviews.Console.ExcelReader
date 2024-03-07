@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using ExcelReader.Controllers;
+using ExcelReader.UI;
 
 namespace ExcelReader;
 
@@ -15,8 +16,8 @@ public class ExcelReader
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
-            Thread.Sleep(4000);
+            MainUI.ErrorMessage(e.Message);
+            Thread.Sleep(3000);
             return;
         }
         app.Services.CreateScope()
