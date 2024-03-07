@@ -54,7 +54,6 @@ public class DataController(ExcelWorkSheetController excelWorkSheetController, E
 
     public ExcelWorkSheetModel? GetWorkSheetModel()
     {
-        // return ExcelDataServiceInstance.GetWorkSheetModel();
         try
         {
             return ExcelDataServiceInstance.GetWorkSheetModel();
