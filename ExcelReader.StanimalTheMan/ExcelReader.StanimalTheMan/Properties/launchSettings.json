@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExcelReader.StanimalTheMan": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Stanimal\\ExcelReader.StanimalTheMan\\ExcelReader.StanimalTheMan"
+    }
+  }
+}
