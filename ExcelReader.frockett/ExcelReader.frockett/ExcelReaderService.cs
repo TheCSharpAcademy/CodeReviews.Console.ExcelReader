@@ -13,8 +13,8 @@ internal static class ExcelReaderService
 
         ExcelWorksheet sheet = package.Workbook.Worksheets[0];
 
+        // Rows are counted dynamically, more employees can be added without modifying the program
         int totalrows = sheet.Dimension.Rows;
-        int totalcolumns = sheet.Dimension.Columns;
 
         for (int row = 2; row < totalrows + 1; row++)
         {
