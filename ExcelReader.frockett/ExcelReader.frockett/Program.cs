@@ -1,9 +1,6 @@
 ﻿using ExcelReader.frockett;
 using ExcelReader.frockett.Database;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-
-var builder = Host.CreateApplicationBuilder();
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
