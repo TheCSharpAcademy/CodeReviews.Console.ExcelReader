@@ -1,10 +1,7 @@
 ﻿using ExcelReader.frockett;
 using ExcelReader.frockett.Database;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Data;
 
 var builder = Host.CreateApplicationBuilder();
 
@@ -32,7 +29,8 @@ using (context)
             Console.ReadLine();
             Environment.Exit(1);
         }
-
+        
+        //There is an optional parameter for the file path in case you place it in a different folder
         var employees = ExcelReaderService.LoadEmployees();
         Console.WriteLine("Reading employees from spreadsheet...");
         Thread.Sleep(1000);

@@ -1,7 +1,5 @@
-﻿
-using Spectre.Console;
+﻿using Spectre.Console;
 using ExcelReader.frockett.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ExcelReader.frockett;
 
