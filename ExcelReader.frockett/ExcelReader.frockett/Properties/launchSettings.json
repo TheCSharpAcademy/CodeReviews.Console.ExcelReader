@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExcelReader.frockett": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\itscr\\source\\repos\\CodeReviews.Console.ExcelReader\\ExcelReader.frockett\\ExcelReader.frockett"
+    }
+  }
+}
