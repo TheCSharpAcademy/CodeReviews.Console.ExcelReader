@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "exelReader2.0": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\.NET FOLDER\\C#Academy\\exelReader2.0"
+    }
+  }
+}
