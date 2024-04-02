@@ -2,14 +2,13 @@ using OfficeOpenXml;
 
 namespace ExcelReader;
 
-public class ExcelFileRead
+public class ExcelFileReader
 {
-    public static List<Number> ReadXLS(string FilePath)
+    public static List<Number> ReadExcel(string FilePath)
     {
         FileInfo existingFile = new(FilePath);
         using ExcelPackage package = new(existingFile);
         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-        int colCount = worksheet.Dimension.End.Column;
         int rowCount = worksheet.Dimension.End.Row;
         List<Number> excelRows = [];
 

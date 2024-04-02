@@ -1,6 +1,6 @@
 ﻿using ExcelReader;
 
-List<Number> numbers = ExcelFileRead.ReadXLS("Numbers.xlsx");
+List<Number> numbers = ExcelFileReader.ReadExcel("Numbers.xlsx");
 
 Database database = new();
 database.Initialize();
