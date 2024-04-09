@@ -5,14 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using Spectre.Console;
 
-//Run();
 Test();
 
 static void Test()
 {
     List<Person> persons = new();
 
-    var filePath = "D:\\.NET FOLDER\\C#Academy\\exelReader2.0\\Libro.xlsx";
+    var filePath = Path.Combine(Directory.GetCurrentDirectory(),"Libro.xlsx");
+
+    string path = Directory.GetCurrentDirectory();
+    Console.WriteLine(path);
+
     Console.WriteLine("\tExcel Reader.");
     Console.WriteLine($"File Path: {filePath}");
     Console.WriteLine();

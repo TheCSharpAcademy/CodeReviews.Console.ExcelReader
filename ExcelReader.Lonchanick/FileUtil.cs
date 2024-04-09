@@ -3,7 +3,7 @@ namespace EPPlusSamples;
 
 public class FileUtil
 {
-    static DirectoryInfo _outputDir = null;
+    static DirectoryInfo _outputDir;
     public static DirectoryInfo OutputDir
     {
         get
