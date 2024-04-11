@@ -6,7 +6,7 @@ namespace ExcelReader;
 public class ExcelReaderContext : DbContext
 {
     public DbSet<Number> Numbers { get; set; }
-    private string _connectionString { get; set; }
+    private readonly string _connectionString;
 
     public ExcelReaderContext(IConfiguration configuration)
     {
