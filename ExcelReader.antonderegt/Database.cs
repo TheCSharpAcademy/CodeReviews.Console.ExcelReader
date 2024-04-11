@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ExcelReader;
 
@@ -6,11 +7,11 @@ public class Database
 {
     private readonly ExcelReaderContext _context;
 
-    public Database()
+    public Database(IConfiguration configuration)
     {
         try
         {
-            _context = new();
+            _context = new(configuration);
         }
         catch (Exception ex)
         {

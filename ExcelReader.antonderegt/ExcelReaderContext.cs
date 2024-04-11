@@ -6,16 +6,15 @@ namespace ExcelReader;
 public class ExcelReaderContext : DbContext
 {
     public DbSet<Number> Numbers { get; set; }
-    public string ConnectionString { get; set; }
+    private string connectionString { get; set; }
 
-    public ExcelReaderContext()
+    public ExcelReaderContext(IConfiguration configuration)
     {
-        IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-        ConnectionString = configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
+        connectionString = configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(ConnectionString);
+        optionsBuilder.UseSqlServer(connectionString);
     }
 }
