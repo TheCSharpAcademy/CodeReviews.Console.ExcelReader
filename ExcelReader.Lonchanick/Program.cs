@@ -1,5 +1,4 @@
-﻿
-using exelReader2._0;
+﻿using exelReader2._0;
 using exelReader2._0.Models;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
@@ -9,6 +8,7 @@ Test();
 
 static void Test()
 {
+    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
     List<Person> persons = new();
 
     var filePath = Path.Combine(Directory.GetCurrentDirectory(),"Libro.xlsx");
@@ -24,11 +24,9 @@ static void Test()
 
     using (ExcelPackage package = new ExcelPackage(existingFile))
     {
-        //Get the first worksheet in the workbook
         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-        int numOfRows = worksheet.Dimension.Rows;//getting numbers of row inside worksheed
+        int numOfRows = worksheet.Dimension.Rows;
 
-        //getting a List of Person model; List<Person>
         for (int row = 2; row <= numOfRows; row++)
         {
             persons.Add(
@@ -41,8 +39,8 @@ static void Test()
                     Phone = worksheet.Cells[row, 5].Value.ToString(),
                 });
         }
-
     }
+
     Console.WriteLine("Saving to DB");
     Persist(persons);//saving to DB
     Console.WriteLine("Done!");
@@ -54,9 +52,6 @@ static void Test()
 
 static void Persist(List<Person> persons)
 {
-
-
-    //create db if does not exist
     ContextDB db = new();
     if (db.Database.CanConnect())
     {
@@ -70,9 +65,7 @@ static void Persist(List<Person> persons)
         Console.WriteLine("Database does not exist!");
         db.Database.Migrate();
         Console.WriteLine("Database created successfully.");
-
     }
-
 
     db.Persons.AddRange(persons);
     db.SaveChanges();

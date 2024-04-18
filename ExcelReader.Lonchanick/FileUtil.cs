@@ -38,7 +38,7 @@ public class FileUtil
         var fi = new FileInfo(altOutputDir.FullName + Path.DirectorySeparatorChar + file);
         if (deleteIfExists && fi.Exists)
         {
-            fi.Delete();  // ensures we create a new workbook
+            fi.Delete();   
         }
         return fi;
     }
