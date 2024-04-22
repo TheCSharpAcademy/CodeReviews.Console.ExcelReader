@@ -6,7 +6,7 @@ internal class UserInterface
 {
     public static void Loading(string loadMessage)
     {
-        var spinner = AnsiConsole.Status().Spinner(Spinner.Known.Aesthetic).Start(loadMessage, ctx =>
+        AnsiConsole.Status().Spinner(Spinner.Known.Aesthetic).Start(loadMessage, ctx =>
         {
             int i = 0;
             Random random = new Random();
