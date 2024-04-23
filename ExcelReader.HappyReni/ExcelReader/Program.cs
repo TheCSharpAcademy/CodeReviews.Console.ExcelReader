@@ -1,3 +1,0 @@
-﻿using ExcelReader;
-
-new ExcelManager();
