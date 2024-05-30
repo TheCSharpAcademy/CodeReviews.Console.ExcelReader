@@ -23,7 +23,6 @@ namespace ExcelReader
                 using (ExcelPackage excelPackage = new ExcelPackage(fileInfo))
                 {
                     ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets[0];
-                    int colCount = excelWorksheet.Dimension.End.Column;
                     int rowCount = excelWorksheet.Dimension.End.Row;
 
                     for (int i = 1; i <= rowCount; i++)
