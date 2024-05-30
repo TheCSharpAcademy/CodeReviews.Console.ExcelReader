@@ -1,4 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ExcelReader.Models
 {
@@ -19,7 +24,7 @@ namespace ExcelReader.Models
         public string AccountNo { get; set; }
         public int CheckNo { get; set; }
         public decimal Amount { get; set; }
-        public DateOnly Date { get; set; }
-        public bool Canceled { get; set; }
+        public DateOnly Date {  get; set; }
+        public bool Canceled {  get; set; }
     }
 }

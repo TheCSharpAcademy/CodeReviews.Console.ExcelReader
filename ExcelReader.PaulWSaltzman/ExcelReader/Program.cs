@@ -4,10 +4,12 @@ using ExcelReader.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
 
 class Program
 {
-    static async Task Main()
+    static async Task Main(string[] args)
     {
         // Build configuration
         var configuration = new ConfigurationBuilder()

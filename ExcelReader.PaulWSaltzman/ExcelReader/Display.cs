@@ -33,7 +33,7 @@ namespace ExcelReader
                             AnsiConsole.MarkupLine($@"LOG: Excel file not found.  Please check ExcelReader\Excelreader\IssuedChecks.xlsx, and reload the program");
                             Console.ReadKey();
                             Environment.Exit(0);
-                        }
+                        };
 
                     AnsiConsole.MarkupLine("LOG: Excel File Found ...");
 
