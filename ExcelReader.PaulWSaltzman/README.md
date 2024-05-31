@@ -5,7 +5,6 @@ library.  I've decided to import a list of checks.  A function like this could
 be used by a user to upload written checks to a database where they could be
 compared to the checks coming in to monitor check fraud.
 
-
 ## Requirements
 
 - [x] This is an application that will read data from an Excel spreadsheet
@@ -27,8 +26,8 @@ that can be read by your application.
 
 ## Challanges
 
-I started with the excel reader, added in the database, and from there is was 
-easy to display the results from the database. I used the status from specre 
+I started with the excel reader, added in the database, and from there is was
+easy to display the results from the database. I used the status from specre
 console to provide informtion to the user.
 
 ## References
