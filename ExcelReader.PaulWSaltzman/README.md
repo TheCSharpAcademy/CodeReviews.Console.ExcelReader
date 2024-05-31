@@ -33,7 +33,7 @@ console to provide informtion to the user.
 
 ## References
 
-https://www.youtube.com/watch?v=kBwmP-kLEEE
-https://www.youtube.com/watch?v=DIg_hfexws8
+<https://www.youtube.com/watch?v=kBwmP-kLEEE>
+<https://www.youtube.com/watch?v=DIg_hfexws8>
 
 [EOF]
