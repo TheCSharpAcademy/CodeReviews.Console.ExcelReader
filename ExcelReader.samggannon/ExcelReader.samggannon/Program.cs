@@ -1,7 +1,27 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using System.Collections.Generic;
+using ExcelReader.samggannon.Controllers;
+using ExcelReader.samggannon.Data;
+using ExcelReader.samggannon.Services;
+using ExcelReader.samggannon.UI;
+using Microsoft.Extensions.DependencyInjection;
 
-Console.WriteLine("Hello, World!");
+MainAsync(args).GetAwaiter().GetResult();
+
+Console.WriteLine("Press [enter] to cease teasting.");
+Console.ReadLine();
+
+static async Task MainAsync(string[] args)
+{
+
+    var serviceProvider = new ServiceCollection()
+    .AddSingleton<PlayerContext>()
+    .AddSingleton<IPlayerService, PlayerService>()
+    .AddScoped<DbPlayerConroller>()
+    .BuildServiceProvider();
+
+    await ConsoleOutput.EnsuredatabaseDeletion(serviceProvider);
+}
+
 
 // Requirements/ToDo
 //
