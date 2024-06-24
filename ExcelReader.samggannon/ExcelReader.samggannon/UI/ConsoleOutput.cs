@@ -17,6 +17,7 @@ internal static class ConsoleOutput
 
     internal static void ShowTable(List<Player> playerTableData)
     {
+        // add ansi console to display a table and show the data
         throw new NotImplementedException();
     }
 }
