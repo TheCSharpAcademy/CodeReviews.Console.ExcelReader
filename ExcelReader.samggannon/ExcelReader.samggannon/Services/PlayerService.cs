@@ -13,13 +13,13 @@ internal class PlayerService : IPlayerService
 
     public async Task<bool> DeletePlayerDataDb()
     {
-        using var db = _playerContextDb;
+        var db = _playerContextDb;
         return await db.Database.EnsureDeletedAsync();
     }
 
     public async Task<bool> CreatePlayerDataDb()
     {
-        using var db = _playerContextDb;
+        var db = _playerContextDb;
         return await db.Database.EnsureCreatedAsync();
     }
 }

@@ -4,11 +4,11 @@ using ExcelReader.samggannon.UI;
 
 namespace ExcelReader.samggannon.Controllers;
 
-internal class DbPlayerConroller
+internal class DbPlayerController
 {
     private readonly IPlayerService _playerService;
 
-    public DbPlayerConroller(IPlayerService playerService)
+    public DbPlayerController(IPlayerService playerService)
     {
         _playerService = playerService;
     }
@@ -28,9 +28,9 @@ internal class DbPlayerConroller
         }
     }
 
-    public async void EnsureCreate()
+    public async Task EnsureCreate()
     {
-        ConsoleOutput.InformUser("Creating and seeding database");
+        ConsoleOutput.InformUser("Creating database");
         bool isCreated = await _playerService.CreatePlayerDataDb();
 
         if (!isCreated)

@@ -1,27 +1,27 @@
-﻿// See https://aka.ms/new-console-template for more information
-using ExcelReader.samggannon.Controllers;
+﻿using ExcelReader.samggannon.Controllers;
 using ExcelReader.samggannon.Data;
 using ExcelReader.samggannon.Services;
-using ExcelReader.samggannon.UI;
 using Microsoft.Extensions.DependencyInjection;
 
-MainAsync(args).GetAwaiter().GetResult();
+var serviceProvider = ConfigureServices();
+var dataBaseController = serviceProvider.GetService<DbPlayerController>();
 
-Console.WriteLine("Press [enter] to cease teasting.");
+await dataBaseController.EnsureDelete();
+await dataBaseController.EnsureCreate();
+
+Console.WriteLine("Press [enter] to cease testing");
 Console.ReadLine();
 
-static async Task MainAsync(string[] args)
+ServiceProvider ConfigureServices()
 {
+    var serviceCollection = new ServiceCollection();
 
-    var serviceProvider = new ServiceCollection()
-    .AddSingleton<PlayerContext>()
-    .AddSingleton<IPlayerService, PlayerService>()
-    .AddScoped<DbPlayerConroller>()
-    .BuildServiceProvider();
+    serviceCollection.AddDbContext<PlayerContext>();
+    serviceCollection.AddScoped<IPlayerService, PlayerService>();
+    serviceCollection.AddScoped<DbPlayerController>();
 
-    await ConsoleOutput.EnsuredatabaseDeletion(serviceProvider);
+    return serviceCollection.BuildServiceProvider();
 }
-
 
 // Requirements/ToDo
 //
