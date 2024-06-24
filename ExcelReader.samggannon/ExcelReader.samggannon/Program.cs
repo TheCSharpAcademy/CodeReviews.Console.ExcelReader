@@ -9,6 +9,9 @@ var dataBaseController = serviceProvider.GetService<DbPlayerController>();
 await dataBaseController.EnsureDelete();
 await dataBaseController.EnsureCreate();
 
+ExcelService xlsxReader = new();
+xlsxReader.ReadExcelSheetAsync();
+
 Console.WriteLine("Press [enter] to cease testing");
 Console.ReadLine();
 

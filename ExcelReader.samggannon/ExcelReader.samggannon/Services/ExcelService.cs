@@ -3,27 +3,25 @@ using ExcelReader.samggannon.Models;
 using ExcelReader.samggannon.UI;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OfficeOpenXml;
+using System.Configuration;
 
 namespace ExcelReader.samggannon.Services;
 
 internal class ExcelService
 {
     private static readonly PlayerContext _playerContext = new();
-    private readonly FileInfo _fileName;
+    private readonly string _filePath;
 
     public ExcelService()
     {
-
+        _filePath = ConfigurationManager.AppSettings["ExcelSheet"];
     }
 
-    public async void ReadExcelSheet(string fileName)
+    public async Task ReadExcelSheetAsync()
     {
-        ExcelWorksheet? worksheet = null;
-        List<Player> playerTableData = new List<Player>();
-
-        if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName))
+        if (string.IsNullOrWhiteSpace(_filePath) || !File.Exists(_filePath))
         {
-            Console.WriteLine($"{fileName}: did not exist.");
+            Console.WriteLine($"{_filePath}: did not exist.");
             throw new FileNotFoundException("File not found");
         }
 
@@ -32,20 +30,26 @@ internal class ExcelService
         try
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using var package = new ExcelPackage(_fileName);
-            worksheet = await GetWorkSheet(package);
+            using var package = new ExcelPackage(new FileInfo(_filePath));
+            var worksheet = await GetWorkSheetAsync(package);
 
-            int firstRow = 1;  int firstColumn = 1;
+            if (worksheet == null || worksheet.Dimension == null)
+            {
+                ConsoleOutput.InformUser("Worksheet is empty or does not exist.");
+                return;
+            }
+
+            var playerTableData = new List<Player>();
+            int firstRow = 1, firstColumn = 1;
 
             if (!string.IsNullOrWhiteSpace(worksheet.Cells[firstRow, firstColumn].Value?.ToString()))
             {
                 for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
                 {
                     var column = 1;
-
                     var player = new Player
                     {
-                        Id = worksheet.Cells[row, column++].GetValue<int>(),
+                        // Id = worksheet.Cells[row, column++].GetValue<int>(),
                         Year = worksheet.Cells[row, column++].GetValue<string>(),
                         Team = worksheet.Cells[row, column++].GetValue<string>(),
                         Name = worksheet.Cells[row, column++].GetValue<string>(),
@@ -68,21 +72,18 @@ internal class ExcelService
             {
                 ConsoleOutput.InformUser("Ensure data is present in the excel sheet. Make sure cell A:A has input");
             }
-        } 
-        catch(Exception ex) 
+
+            ConsoleOutput.ShowTable(playerTableData);
+        }
+        catch (Exception ex)
         {
             ConsoleOutput.InformUser(ex.Message);
         }
-
-        ConsoleOutput.ShowTable(playerTableData);
     }
-     
-    private async Task<ExcelWorksheet> GetWorkSheet(ExcelPackage package)
+
+    private async Task<ExcelWorksheet> GetWorkSheetAsync(ExcelPackage package)
     {
-        await package.LoadAsync(_fileName);
-
-        var worksheet = package.Workbook.Worksheets["Sheet1"];
-
-        return worksheet;
+        await package.LoadAsync(new FileInfo(_filePath));
+        return package.Workbook.Worksheets["PlayerData"];
     }
 }
