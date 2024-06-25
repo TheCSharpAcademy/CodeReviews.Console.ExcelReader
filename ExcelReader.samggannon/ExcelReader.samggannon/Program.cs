@@ -10,7 +10,7 @@ await dataBaseController.EnsureDelete();
 await dataBaseController.EnsureCreate();
 
 ExcelService xlsxReader = new();
-xlsxReader.ReadExcelSheetAsync();
+await xlsxReader.ReadExcelSheetAsync();
 
 ServiceProvider ConfigureServices()
 {

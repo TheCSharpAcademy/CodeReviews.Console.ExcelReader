@@ -13,13 +13,7 @@ internal class ExcelService
 
     public ExcelService()
     {
-        // dynamically retrieve file path from app.config file
-        // _filePath = ConfigurationManager.AppSettings["ExcelSheet"];
-
-        // retrieve file path from the directory of the project.
-        string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string folderPath = Path.Combine(baseDirectory, "Data");
-        _filePath = Path.Combine(folderPath, "SampleFootballPlayerData.xlsx");
+        _filePath = ConfigurationManager.AppSettings["ExcelSheet"];
     }
 
     public async Task ReadExcelSheetAsync()
@@ -29,15 +23,16 @@ internal class ExcelService
             if (string.IsNullOrWhiteSpace(_filePath) || !File.Exists(_filePath))
             {
                 Console.WriteLine($"{_filePath}: did not exist.");
-                throw new FileNotFoundException("File not found"); 
+                throw new FileNotFoundException("File not found");
             }
 
             Console.WriteLine("Reading excel sheet and populating database...");
 
-        
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using var package = new ExcelPackage(new FileInfo(_filePath));
-            var worksheet = await GetWorkSheetAsync(package);
+            using var package = new ExcelPackage();
+            LoadPackage(package);
+
+            var worksheet = GetWorksheet(package);
 
             if (worksheet == null || worksheet.Dimension == null)
             {
@@ -71,7 +66,7 @@ internal class ExcelService
                     playerTableData.Add(player);
                 }
 
-                await _playerContext.SaveChangesAsync();
+                 await _playerContext.SaveChangesAsync();
             }
             else
             {
@@ -90,9 +85,41 @@ internal class ExcelService
         }
     }
 
-    private async Task<ExcelWorksheet> GetWorkSheetAsync(ExcelPackage package)
+    private void LoadPackage(ExcelPackage package)
     {
-        await package.LoadAsync(new FileInfo(_filePath));
-        return package.Workbook.Worksheets["PlayerData"];
+        try
+        {
+            Console.WriteLine("Attempting to load package...");
+            var file = new FileInfo(_filePath);
+            using (var stream = file.OpenRead())
+            {
+                package.Load(stream);
+            }
+            Console.WriteLine("Package loaded successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while loading the package: {ex.Message}");
+            throw;
+        }
+    }
+
+    private ExcelWorksheet GetWorksheet(ExcelPackage package)
+    {
+        try
+        {
+            var worksheet = package.Workbook.Worksheets["PlayerData"];
+            if (worksheet == null)
+            {
+                Console.WriteLine("Worksheet 'PlayerData' does not exist.");
+            }
+            return worksheet;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while retrieving the worksheet: {ex.Message}");
+            throw;
+        }
     }
 }
+
