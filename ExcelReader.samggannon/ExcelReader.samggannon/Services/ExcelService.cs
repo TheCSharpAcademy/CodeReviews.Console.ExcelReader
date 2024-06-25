@@ -1,7 +1,6 @@
 ﻿using ExcelReader.samggannon.Data;
 using ExcelReader.samggannon.Models;
 using ExcelReader.samggannon.UI;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OfficeOpenXml;
 using System.Configuration;
 
@@ -14,28 +13,35 @@ internal class ExcelService
 
     public ExcelService()
     {
-        _filePath = ConfigurationManager.AppSettings["ExcelSheet"];
+        // dynamically retrieve file path from app.config file
+        // _filePath = ConfigurationManager.AppSettings["ExcelSheet"];
+
+        // retrieve file path from the directory of the project.
+        string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string folderPath = Path.Combine(baseDirectory, "Data");
+        _filePath = Path.Combine(folderPath, "SampleFootballPlayerData.xlsx");
     }
 
     public async Task ReadExcelSheetAsync()
     {
-        if (string.IsNullOrWhiteSpace(_filePath) || !File.Exists(_filePath))
-        {
-            Console.WriteLine($"{_filePath}: did not exist.");
-            throw new FileNotFoundException("File not found");
-        }
-
-        Console.WriteLine("Reading excel sheet and populating database...");
-
         try
         {
+            if (string.IsNullOrWhiteSpace(_filePath) || !File.Exists(_filePath))
+            {
+                Console.WriteLine($"{_filePath}: did not exist.");
+                throw new FileNotFoundException("File not found"); 
+            }
+
+            Console.WriteLine("Reading excel sheet and populating database...");
+
+        
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using var package = new ExcelPackage(new FileInfo(_filePath));
             var worksheet = await GetWorkSheetAsync(package);
 
             if (worksheet == null || worksheet.Dimension == null)
             {
-                ConsoleOutput.InformUser("Worksheet is empty or does not exist.");
+                Console.WriteLine("Worksheet is empty or does not exist.");
                 return;
             }
 
@@ -44,17 +50,16 @@ internal class ExcelService
 
             if (!string.IsNullOrWhiteSpace(worksheet.Cells[firstRow, firstColumn].Value?.ToString()))
             {
-                for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
+                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                 {
                     var column = 1;
                     var player = new Player
                     {
-                        // Id = worksheet.Cells[row, column++].GetValue<int>(),
                         Year = worksheet.Cells[row, column++].GetValue<string>(),
                         Team = worksheet.Cells[row, column++].GetValue<string>(),
                         Name = worksheet.Cells[row, column++].GetValue<string>(),
                         Number = worksheet.Cells[row, column++].GetValue<string>(),
-                        Position = worksheet.Cells[row, column++].GetValue<string>(),
+                        Pos = worksheet.Cells[row, column++].GetValue<string>(),
                         Height = worksheet.Cells[row, column++].GetValue<string>(),
                         Weight = worksheet.Cells[row, column++].GetValue<string>(),
                         Age = worksheet.Cells[row, column++].GetValue<string>(),
@@ -70,14 +75,18 @@ internal class ExcelService
             }
             else
             {
-                ConsoleOutput.InformUser("Ensure data is present in the excel sheet. Make sure cell A:A has input");
+                Console.WriteLine("Ensure data is present in the excel sheet. Make sure cell A:A has input");
             }
 
             ConsoleOutput.ShowTable(playerTableData);
         }
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
         catch (Exception ex)
         {
-            ConsoleOutput.InformUser(ex.Message);
+            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
         }
     }
 

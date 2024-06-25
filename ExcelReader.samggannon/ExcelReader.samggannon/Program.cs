@@ -12,9 +12,6 @@ await dataBaseController.EnsureCreate();
 ExcelService xlsxReader = new();
 xlsxReader.ReadExcelSheetAsync();
 
-Console.WriteLine("Press [enter] to cease testing");
-Console.ReadLine();
-
 ServiceProvider ConfigureServices()
 {
     var serviceCollection = new ServiceCollection();

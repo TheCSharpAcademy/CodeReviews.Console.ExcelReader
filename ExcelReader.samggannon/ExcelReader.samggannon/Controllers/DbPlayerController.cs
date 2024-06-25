@@ -16,21 +16,21 @@ internal class DbPlayerController
     public async Task EnsureDelete()
     {
        
-        ConsoleOutput.InformUser("Deleting exisiting database...");
+        Console.WriteLine("Deleting exisiting database...");
         bool isDeleted = await _playerService.DeletePlayerDataDb();
         if (isDeleted)
         {
-            ConsoleOutput.InformUser("Database was deleted...");
+            Console.WriteLine("Database was deleted...");
         }
         else
         {
-            ConsoleOutput.InformUser("Database didn't exist.");
+            Console.WriteLine("Database didn't exist.");
         }
     }
 
     public async Task EnsureCreate()
     {
-        ConsoleOutput.InformUser("Creating database");
+        Console.WriteLine("Creating database");
         bool isCreated = await _playerService.CreatePlayerDataDb();
 
         if (!isCreated)
