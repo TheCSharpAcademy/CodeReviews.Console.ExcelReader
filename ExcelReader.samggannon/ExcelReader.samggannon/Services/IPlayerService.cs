@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ExcelReader.samggannon.Services;
 
-namespace ExcelReader.samggannon.Services
+internal interface IPlayerService
 {
-    internal interface IPlayerService
-    {
-        public Task<bool> DeletePlayerDataDb();
-        public Task<bool> CreatePlayerDataDb();
-    }
+    public Task<bool> DeletePlayerDataDb();
+    public Task<bool> CreatePlayerDataDb();
 }

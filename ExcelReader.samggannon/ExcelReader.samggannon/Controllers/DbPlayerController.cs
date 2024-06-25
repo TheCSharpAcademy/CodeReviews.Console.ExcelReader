@@ -1,6 +1,4 @@
-﻿using ExcelReader.samggannon.Data;
-using ExcelReader.samggannon.Services;
-using ExcelReader.samggannon.UI;
+﻿using ExcelReader.samggannon.Services;
 
 namespace ExcelReader.samggannon.Controllers;
 
@@ -15,7 +13,7 @@ internal class DbPlayerController
 
     public async Task EnsureDelete()
     {
-       
+
         Console.WriteLine("Deleting exisiting database...");
         bool isDeleted = await _playerService.DeletePlayerDataDb();
         if (isDeleted)
