@@ -86,11 +86,10 @@ public class ExcelFileService
         }
     }
 
-    internal void ExportAsPDF()
+    internal void ExportAsPdf()
     {
         try
         {
-            int lastRow = _worksheet.Dimension.End.Row;
             var outputFileName = "ExcelToPdf" + DateTime.Now.ToLongTimeString();
             if (!Directory.Exists("output"))
             {

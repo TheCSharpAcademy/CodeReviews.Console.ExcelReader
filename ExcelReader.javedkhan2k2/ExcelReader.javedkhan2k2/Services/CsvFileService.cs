@@ -88,7 +88,7 @@ public class CsvFileService
             }
             using (ExcelPackage package = new ExcelPackage())
             {
-                var worksheet = package.Workbook.Worksheets.Add("Sheet1", _worksheet);
+                package.Workbook.Worksheets.Add("Sheet1", _worksheet);
                 FileInfo outputFile = new FileInfo(@$"output/CsvToExcel{DateTime.Now.ToLongTimeString()}.xlsx");
                 package.SaveAs(outputFile);
             }
@@ -100,11 +100,10 @@ public class CsvFileService
         }
     }
 
-    internal void ExportAsPDF()
+    internal void ExportAsPdf()
     {
         try
         {
-            int lastRow = _worksheet.Dimension.End.Row;
             var outputFileName = "CsvToPdf" + DateTime.Now.ToLongTimeString();
             if (!Directory.Exists("output"))
             {

@@ -104,7 +104,7 @@ void ReadCsvFile()
                     reader.ExportAsExcel();
                     break;
                 case "Export as PDF":
-                    reader.ExportAsPDF();
+                    reader.ExportAsPdf();
                     break;
                 case "Exit": 
                     reader.DisposeWorksheet();
@@ -158,7 +158,7 @@ void ReadExcelFile()
                     reader.ExportAsCSV();
                     break;
                 case "Export as PDF":
-                    reader.ExportAsPDF();
+                    reader.ExportAsPdf();
                     break;
                 case "Exit": 
                     reader.DisposeWorksheet();
