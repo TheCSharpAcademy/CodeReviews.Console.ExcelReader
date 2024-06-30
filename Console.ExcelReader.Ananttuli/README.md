@@ -1,7 +1,8 @@
 # ExcelReader
 
 - Prompts user for file path (default provided).
-- Reads data from any excel sheet, regardless of the number of columns or the content of the header.
+- Reads data from any excel sheet, regardless of the number of columns
+  or the content of the header.
 - Stores in the database
 - Displays data in the console
 
