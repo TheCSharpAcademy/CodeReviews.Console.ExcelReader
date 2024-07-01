@@ -14,6 +14,13 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.6" />
+      <PackageReference Include="Spectre.Console" Version="0.49.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="esd.xlsx">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>
