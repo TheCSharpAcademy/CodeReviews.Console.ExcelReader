@@ -10,6 +10,8 @@ Run();
 
 static void Run()
 {
+    AnsiConsole.MarkupLine($"\n\t\t[bold][green]E X C E L[/]    [blue]R E A D E R[/][/]\n");
+
     var serviceProvider = Bootstrap();
     var controller = serviceProvider.GetService<Controller>();
     var dataPersistenceService = serviceProvider.GetService<DataPersistenceService>();
@@ -21,6 +23,10 @@ static void Run()
 
     var (path, hasHeader) = View.PromptForFile();
 
+    AnsiConsole.MarkupLine($"[blue]Extracting data from file...[/]");
+    AnsiConsole.MarkupLine($"\tPath: {path}");
+    AnsiConsole.MarkupLine($"\tPreparing rows, columns and cell values ...");
+
     var parsedResult = ExcelParser.Parse(path, hasHeader);
 
     if (parsedResult == null || parsedResult.ErrorMessage != null)
@@ -29,11 +35,23 @@ static void Run()
         Environment.Exit(1);
     }
 
+    AnsiConsole.MarkupLine($"\tExtracted [yellow]{parsedResult.ParsedCols.Count} columns[/]" +
+        $", [yellow]{parsedResult.ParsedRows.Count} rows[/]");
+    AnsiConsole.MarkupLine("\t[green]Done[/]");
+
+    AnsiConsole.Markup($"[blue]Saving extracted data in database...[/]");
     dataPersistenceService.InsertParsedData(parsedResult);
+    AnsiConsole.MarkupLine("[green]Done[/]");
 
+    AnsiConsole.Markup($"[blue]Retrieving data from database...[/]");
     var (rows, cols) = controller.FetchSerializedData();
+    AnsiConsole.MarkupLine("[green]Done[/]");
 
+    AnsiConsole.MarkupLine($"[blue]Displaying data...[/]\n");
     View.DisplayData(rows, cols);
+    AnsiConsole.MarkupLine("[green]Done[/]");
+
+    AnsiConsole.MarkupLine("\n\n[blue]Exiting app...[/]");
 }
 
 static ServiceProvider Bootstrap()

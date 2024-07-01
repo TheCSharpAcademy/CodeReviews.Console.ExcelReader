@@ -21,10 +21,16 @@ public static class View
 
     public static (string path, bool hasHeader) PromptForFile()
     {
-        var defaultPath = Path.GetFullPath("./Data/data.xlsx");
-        var path = AnsiConsole.Ask("\nFile path? [grey](Press enter to use default)[/]\n", defaultPath);
+        AnsiConsole.WriteLine("\n");
 
-        var hasHeader = AnsiConsole.Confirm("Does file have a header?", true);
+        var defaultPath = Path.GetFullPath("./Data/data.xlsx");
+        var path = AnsiConsole.Ask(
+            "[blue]Enter path to excel file?[/] [grey](Press enter to use default)[/]\n",
+            defaultPath
+        );
+
+        AnsiConsole.WriteLine("\n");
+        var hasHeader = AnsiConsole.Confirm("[blue]Does file have a header?[/]", true);
 
         AnsiConsole.WriteLine(path);
 
