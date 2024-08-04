@@ -1,4 +1,5 @@
 using ExcelReader.kwm0304.Data;
+using ExcelReader.kwm0304.Models;
 using ExcelReader.kwm0304.Services;
 using ExcelReader.kwm0304.Views;
 using Spectre.Console;
@@ -16,15 +17,53 @@ public class AppSession
   }
   public void OnStart()
   {
-    FileInfo filePath = UserInput.GetUserPath();
+    string inputPath = UserInput.GetUserPath().Trim('"');
+    FileInfo filePath = new FileInfo(inputPath);
     int headerRow = UserInput.GetRowOptions("What line are your column names on?");
     int dataStart = UserInput.GetRowOptions("What line does your row data start on?");
-    var response = _service.ParseCsv(filePath, headerRow, dataStart);
-    List<string> colNames = response.ColumnNames;
-    var excelTable = new GenericTable(response.Header, colNames, response.RowValues);
-    excelTable.Show();
+    Response<Dictionary<string, object>> response;
+    Console.WriteLine("FULLNAME: " + filePath.FullName);
+    try
+    {
+      if (filePath.FullName.EndsWith("csv"))
+      {
+        response = _service.ParseCsv(filePath, headerRow, dataStart);
+        List<string> colNames = response.ColumnNames;
+        var excelTable = new GenericTable(Path.GetFileNameWithoutExtension(filePath.Name), colNames, response.RowValues);
+        excelTable.Show();
+      }
+      else if (filePath.FullName.EndsWith(".xlsx") || filePath.Extension.ToLower() == ".xls")
+      {
+        response = _service.ParseCsvFromWorkbook(filePath, headerRow, dataStart);
+        List<string> colNames = response.ColumnNames;
+        var excelTable = new GenericTable(Path.GetFileNameWithoutExtension(filePath.Name), colNames, response.RowValues);
+        excelTable.Show();
+      }
+      else
+      {
+        throw new InvalidDataException("Unsupported file type.");
+      }
+    }
+    catch (InvalidDataException ex)
+    {
+      AnsiConsole.WriteLine(ex.Message);
+      return;
+    }
+    catch (Exception ex)
+    {
+      AnsiConsole.WriteLine($"An error occurred: {ex.Message}");
+      return;
+    }
+
+    if (response.RowValues.Count == 0)
+    {
+      AnsiConsole.WriteLine("No data was parsed from the file.");
+      return;
+    }
+
     _dbAccess.SaveToDatabase(response);
     AnsiConsole.WriteLine("Press any key to exit...");
     Console.ReadKey(true);
   }
+
 }

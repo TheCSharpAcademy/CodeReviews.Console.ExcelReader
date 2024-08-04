@@ -4,12 +4,12 @@ namespace ExcelReader.kwm0304.Views;
 
 public class UserInput
 {
-  public static FileInfo GetUserPath()
+  public static string GetUserPath()
   {
-    string folder = GetAndConfirm("Please provide the path to the folder your file is in:");
-    string file = GetAndConfirm("What is the file name: (including the .csv)");
-    string path = Path.Combine(folder, file);
-    return new FileInfo(path);
+    string folder = GetAndConfirm("What is the path to your csv?\n");
+    // string file = GetAndConfirm("What is the file name: (including the .csv)");
+    // string path = Path.Combine(folder, file);
+    return folder;
   }
   public static int GetRowOptions(string question)
   {
@@ -17,7 +17,7 @@ public class UserInput
   }
   public static string GetAndConfirm(string question)
   {
-    string folderPath = AnsiConsole.Ask<string>($"[bold chartreuse_1]{question} [/]\n");
+    string folderPath = AnsiConsole.Ask<string>($"[bold blue]{question} [/]\n");
     if (string.IsNullOrEmpty(folderPath) || string.IsNullOrWhiteSpace(folderPath))
     {
       return GetAndConfirm(question);

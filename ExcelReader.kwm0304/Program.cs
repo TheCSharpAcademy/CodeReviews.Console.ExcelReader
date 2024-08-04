@@ -1,4 +1,4 @@
-﻿using ExcelReader.kwm0304.Config;
+﻿// using ExcelReader.kwm0304.Config;
 using ExcelReader.kwm0304.Data;
 
 namespace ExcelReader.kwm0304;
@@ -16,8 +16,9 @@ public class Program
 {
   public static void Main(string[] args)
   {
-    var connString = AppConfiguration.GetConnectionString("DefaultConnection");
-    var dbAccess = new DatabaseAccess(connString);
+    // var connString = AppConfiguration.GetConnectionString("Server=localhost;Database=csvReaderDb;Trusted_Connection=True;TrustServerCertificate=True;");
+    var dbAccess = new DatabaseAccess("Server=localhost;Database=csvReaderDb;Trusted_Connection=True;TrustServerCertificate=True;");
     var session = new AppSession(dbAccess);
+    session.OnStart();
   }
 }
