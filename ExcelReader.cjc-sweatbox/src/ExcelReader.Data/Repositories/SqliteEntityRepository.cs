@@ -91,7 +91,6 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
     {
         string tableName = GetTableName();
         string keyColumn = GetKeyColumnName()!;
-        string keyProperty = GetKeyPropertyName()!;
         string query = $"SELECT * FROM {tableName} WHERE {keyColumn} = '{id}'";
 
         using var connection = new SQLiteConnection(ConnectionString);
@@ -200,5 +199,4 @@ public class SqliteEntityRepository<TEntity> : IEntityRepository<TEntity> where 
     }
 
     #endregion
-
 }
