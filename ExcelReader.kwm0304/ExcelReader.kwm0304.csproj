@@ -6,7 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+<ItemGroup>
+  <None Update="appsettings.json">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.2.2" />
     <PackageReference Include="Spectre.Console" Version="0.49.1" />
