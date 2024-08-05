@@ -38,7 +38,7 @@ public class CsvParserService
     }
     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
     response.ColumnNames = worksheet.Cells[colRow, 1, colRow, worksheet.Dimension.End.Column]
-        .Select(cell => _validation.JoinColumnName(cell.Text))
+        .Select(cell => _validation.NormalizeColumnName(cell.Text))
         .ToList();
     response.Header = "Header";
     response.RowValues = [];

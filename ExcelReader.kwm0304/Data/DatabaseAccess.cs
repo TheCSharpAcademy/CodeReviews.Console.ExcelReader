@@ -7,37 +7,35 @@ using Spectre.Console;
 
 namespace ExcelReader.kwm0304.Data;
 
-public class DatabaseAccess
+public class DatabaseAccess(string connectionString, string tableName = "csvReaderDb")
 {
-  private readonly string _connectionString;
-  private readonly string _tableName;
-  private readonly Validation _validation;
-
-  public DatabaseAccess(string connectionString, string tableName = "csvReaderDb")
-  {
-    _connectionString = connectionString;
-    _tableName = tableName;
-    _validation = new();
-  }
+  private readonly string _connectionString = connectionString;
+  private readonly string _tableName = tableName;
+  private readonly Validation _validation = new();
 
   public void DropAllTables()
   {
     using var connection = new SqlConnection(_connectionString);
     connection.Open();
     string dropTablesScript = GenerateDropTablesScript(connection);
+    if (string.IsNullOrEmpty(dropTablesScript))
+    {
+      AnsiConsole.WriteLine("No tables found in the database. Continuing...");
+      return;
+    }
     ExecuteScript(connection, dropTablesScript);
     AnsiConsole.WriteLine("All tables in the database have been dropped.");
   }
 
   static string GenerateDropTablesScript(SqlConnection connection)
   {
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new();
     string query = @"
             SELECT 'DROP TABLE ' + QUOTENAME(SCHEMA_NAME(schema_id)) + '.' + QUOTENAME(name) + ';'
             FROM sys.tables
             WHERE type = 'U';";
 
-    using (SqlCommand command = new SqlCommand(query, connection))
+    using (SqlCommand command = new(query, connection))
     {
       using SqlDataReader reader = command.ExecuteReader();
       while (reader.Read())
@@ -73,15 +71,12 @@ public class DatabaseAccess
       {
         var columnName = response.ColumnNames[i];
         var paramName = $"@{_validation.NormalizeColumnName(columnName)}";
-        var value = row.TryGetValue(columnName, out object val) ? val : DBNull.Value;
+        var value = row.TryGetValue(columnName, out object? val) ? val : DBNull.Value;
         SqlParameter parameter = new SqlParameter(paramName, _validation.GetSqlDbType(value))
         {
           Value = value
         };
         insertCommand.Parameters.Add(parameter);
-        AnsiConsole.WriteLine($"PARAM NAME: {paramName}*****");
-        AnsiConsole.WriteLine($"VALUE: {value}*****");
-        AnsiConsole.WriteLine($"COL NAME: {columnName}*****");
       }
       insertCommand.ExecuteNonQuery();
     }

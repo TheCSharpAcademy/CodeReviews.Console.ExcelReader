@@ -25,7 +25,7 @@ public class AppSession : IDisposable
         throw new FileNotFoundException("The specified file does not exist.", inputPath);
       }
 
-      FileInfo filePath = new FileInfo(inputPath);
+      FileInfo filePath = new(inputPath);
       string xlsxFilePath = Path.ChangeExtension(filePath.FullName, ".xlsx");
 
       _service.ConvertCsvToXlsx(filePath.FullName, xlsxFilePath);
