@@ -6,10 +6,7 @@ public class UserInput
 {
   public static string GetUserPath()
   {
-    string folder = GetAndConfirm("What is the path to your csv?\n");
-    // string file = GetAndConfirm("What is the file name: (including the .csv)");
-    // string path = Path.Combine(folder, file);
-    return folder;
+    return GetAndConfirm("What is the path to your csv?\n");
   }
   public static int GetRowOptions(string question)
   {

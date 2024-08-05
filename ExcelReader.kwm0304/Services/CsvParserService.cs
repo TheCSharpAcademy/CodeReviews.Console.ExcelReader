@@ -1,4 +1,5 @@
 using ExcelReader.kwm0304.Models;
+using ExcelReader.kwm0304.Utils;
 using OfficeOpenXml;
 using Spectre.Console;
 
@@ -6,6 +7,11 @@ namespace ExcelReader.kwm0304.Services;
 
 public class CsvParserService
 {
+  private readonly Validation _validation;
+  public CsvParserService()
+  {
+    _validation = new();
+  }
   public void ConvertCsvToXlsx(string csvFilePath, string xlsxFilePath)
   {
     var csvLines = File.ReadAllLines(csvFilePath);
@@ -32,7 +38,7 @@ public class CsvParserService
     }
     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
     response.ColumnNames = worksheet.Cells[colRow, 1, colRow, worksheet.Dimension.End.Column]
-        .Select(cell => NormalizeColumnName(cell.Text))
+        .Select(cell => _validation.JoinColumnName(cell.Text))
         .ToList();
     response.Header = "Header";
     response.RowValues = [];
@@ -43,30 +49,10 @@ public class CsvParserService
       {
         var cell = worksheet.Cells[row, col];
         string colName = response.ColumnNames[col - 1];
-        rowData[colName] = GetTypedCellValue(cell);
+        rowData[colName] = _validation.GetTypedCellValue(cell);
       }
       response.RowValues.Add(rowData);
     }
     return response;
-  }
-
-  private object GetTypedCellValue(ExcelRange cell)
-  {
-    return cell.Value switch
-    {
-      null => null!,
-      double d when cell.Style.Numberformat.Format.Contains('%') => d,
-      double d => d,
-      int i => i,
-      bool b => b,
-      DateTime dt => dt,
-      string s => s,
-      _ => cell.Text,
-    };
-  }
-
-  private string NormalizeColumnName(string columnName)
-  {
-    return columnName.Replace(" ", "");
   }
 }

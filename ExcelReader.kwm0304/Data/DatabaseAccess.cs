@@ -1,6 +1,7 @@
 using System.Data;
 using System.Text;
 using ExcelReader.kwm0304.Models;
+using ExcelReader.kwm0304.Utils;
 using Microsoft.Data.SqlClient;
 using Spectre.Console;
 
@@ -10,11 +11,13 @@ public class DatabaseAccess
 {
   private readonly string _connectionString;
   private readonly string _tableName;
+  private readonly Validation _validation;
 
   public DatabaseAccess(string connectionString, string tableName = "csvReaderDb")
   {
     _connectionString = connectionString;
     _tableName = tableName;
+    _validation = new();
   }
 
   public void DropAllTables()
@@ -47,10 +50,8 @@ public class DatabaseAccess
 
   static void ExecuteScript(SqlConnection connection, string script)
   {
-    using (SqlCommand command = new SqlCommand(script, connection))
-    {
-      command.ExecuteNonQuery();
-    }
+    using SqlCommand command = new(script, connection);
+    command.ExecuteNonQuery();
   }
 
   public void SaveToDatabase(Response<List<Dictionary<string, object>>> response)
@@ -71,9 +72,9 @@ public class DatabaseAccess
       for (int i = 0; i < response.ColumnNames.Count; i++)
       {
         var columnName = response.ColumnNames[i];
-        var paramName = $"@{NormalizeColumnName(columnName)}";
+        var paramName = $"@{_validation.NormalizeColumnName(columnName)}";
         var value = row.TryGetValue(columnName, out object val) ? val : DBNull.Value;
-        SqlParameter parameter = new SqlParameter(paramName, GetSqlDbType(value))
+        SqlParameter parameter = new SqlParameter(paramName, _validation.GetSqlDbType(value))
         {
           Value = value
         };
@@ -85,17 +86,10 @@ public class DatabaseAccess
       insertCommand.ExecuteNonQuery();
     }
   }
-  private string NormalizeColumnName(string columnName)
-  {
-    return columnName.Replace(" ", "")
-                     .Replace("%", "PCT")
-                     .Replace("/", "_")
-                     .Replace("#", "Num")
-                     .Replace("-", "_");
-  }
+
   private void CreateTableIfNotExists(SqlConnection connection, List<string> columnNames)
   {
-    var columnDefinitions = columnNames.Select(col => $"[{SanitizeIdentifier(col)}] NVARCHAR(MAX)").ToList();
+    var columnDefinitions = columnNames.Select(col => $"[{_validation.SanitizeIdentifier(col)}] NVARCHAR(MAX)").ToList();
     var createTableQuery = $@"
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='{_tableName}' AND xtype='U')
             CREATE TABLE [{_tableName}] (
@@ -108,7 +102,7 @@ public class DatabaseAccess
 
   private SqlCommand PrepareInsertCommand(SqlConnection connection, List<string> columnNames)
   {
-    var columns = string.Join(", ", columnNames.Select(col => $"[{SanitizeIdentifier(col)}]"));
+    var columns = string.Join(", ", columnNames.Select(col => $"[{_validation.SanitizeIdentifier(col)}]"));
     var parameters = string.Join(", ", columnNames.Select(col => $"@{col}"));
     var insertQuery = $"INSERT INTO [{_tableName}] ({columns}) VALUES ({parameters})";
     var command = new SqlCommand(insertQuery, connection);
@@ -117,24 +111,5 @@ public class DatabaseAccess
       command.Parameters.Add(new SqlParameter($"@{column}", SqlDbType.NVarChar, -1));
     }
     return command;
-  }
-
-  private string SanitizeIdentifier(string identifier)
-  {
-    return identifier.Replace("]", "]]");
-  }
-  private SqlDbType GetSqlDbType(object value)
-  {
-    return value switch
-    {
-      int => SqlDbType.Int,
-      long => SqlDbType.BigInt,
-      float => SqlDbType.Float,
-      double => SqlDbType.Float,
-      decimal => SqlDbType.Decimal,
-      bool => SqlDbType.Bit,
-      DateTime => SqlDbType.DateTime,
-      _ => SqlDbType.NVarChar,
-    };
   }
 }
