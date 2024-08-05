@@ -6,26 +6,35 @@ namespace ExcelReader.kwm0304.Services;
 
 public class CsvParserService
 {
-  public Response<Dictionary<string, object>> ParseCsvFromWorkbook(FileInfo info, int colRow, int dataRow)
+  public void ConvertCsvToXlsx(string csvFilePath, string xlsxFilePath)
   {
-    var response = new Response<Dictionary<string, object>>();
-    string header = info.Name;
-    using ExcelPackage package = new(info);
+    var csvLines = File.ReadAllLines(csvFilePath);
+    using var package = new ExcelPackage();
+    var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+    for (int rowIndex = 0; rowIndex < csvLines.Length; rowIndex++)
+    {
+      var row = csvLines[rowIndex].Split(';');
+      for (int colIndex = 0; colIndex < row.Length; colIndex++)
+      {
+        worksheet.Cells[rowIndex + 1, colIndex + 1].Value = row[colIndex];
+      }
+    }
+    File.WriteAllBytes(xlsxFilePath, package.GetAsByteArray());
+  }
+
+  public Response<List<Dictionary<string, object>>> ParseCsvFromWorkbook(FileInfo info, int colRow, int dataRow)
+  {
+    var response = new Response<List<Dictionary<string, object>>>();
+    using var package = new ExcelPackage(info);
     if (package.Workbook.Worksheets.Count < 1)
     {
-      AnsiConsole.WriteLine("No workbook present");
-      return new Response<Dictionary<string, object>>();
+      throw new InvalidDataException("No workbook present");
     }
     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-
-    if (worksheet == null)
-    {
-      AnsiConsole.WriteLine("No workbook present");
-      return new Response<Dictionary<string, object>>();
-    }
     response.ColumnNames = worksheet.Cells[colRow, 1, colRow, worksheet.Dimension.End.Column]
-                .Select(cell => cell.Text)
-                .ToList();
+        .Select(cell => NormalizeColumnName(cell.Text))
+        .ToList();
+    response.Header = "Header";
     response.RowValues = [];
     for (int row = dataRow; row <= worksheet.Dimension.End.Row; row++)
     {
@@ -41,57 +50,6 @@ public class CsvParserService
     return response;
   }
 
-  public Response<Dictionary<string, object>> ParseCsv(FileInfo info, int colRow, int dataRow)
-  {
-    var response = new Response<Dictionary<string, object>>();
-    string header = info.Name;
-
-    string[] lines = File.ReadAllLines(info.FullName);
-
-    if (lines.Length < dataRow)
-    {
-      throw new InvalidOperationException("The CSV file doesn't have enough rows.");
-    }
-
-    response.ColumnNames = ParseCsvLine(lines[colRow - 1]);
-
-    response.RowValues = new List<Dictionary<string, object>>();
-    for (int i = dataRow - 1; i < lines.Length; i++)
-    {
-      var rowData = new Dictionary<string, object>();
-      var values = ParseCsvLine(lines[i]);
-
-      for (int j = 0; j < Math.Min(response.ColumnNames.Count, values.Count); j++)
-      {
-        string colName = response.ColumnNames[j];
-        rowData[colName] = ParseValue(values[j]);
-      }
-
-      response.RowValues.Add(rowData);
-    }
-
-    return response;
-  }
-  private List<string> ParseCsvLine(string line)
-  {
-    return line.Split(',').Select(value => value.Trim()).ToList();
-  }
-  private object ParseValue(string value)
-  {
-    // Try parsing as different types
-    if (int.TryParse(value, out int intValue))
-      return intValue;
-    if (double.TryParse(value, out double doubleValue))
-      return doubleValue;
-    if (DateTime.TryParse(value, out DateTime dateValue))
-      return dateValue;
-    if (bool.TryParse(value, out bool boolValue))
-      return boolValue;
-
-    // If all else fails, return as string
-    return value;
-  }
-
   private object GetTypedCellValue(ExcelRange cell)
   {
     return cell.Value switch
@@ -105,5 +63,10 @@ public class CsvParserService
       string s => s,
       _ => cell.Text,
     };
+  }
+
+  private string NormalizeColumnName(string columnName)
+  {
+    return columnName.Replace(" ", "");
   }
 }

@@ -1,69 +1,64 @@
-using ExcelReader.kwm0304.Data;
-using ExcelReader.kwm0304.Models;
-using ExcelReader.kwm0304.Services;
-using ExcelReader.kwm0304.Views;
 using Spectre.Console;
+using ExcelReader.kwm0304.Views;
+using ExcelReader.kwm0304.Data;
+using ExcelReader.kwm0304.Services;
 
-namespace ExcelReader.kwm0304;
-
-public class AppSession
+public class AppSession : IDisposable
 {
   private readonly DatabaseAccess _dbAccess;
   private readonly CsvParserService _service;
+
   public AppSession(DatabaseAccess dbAccess)
   {
-    _dbAccess = dbAccess;
+    _dbAccess = dbAccess ?? throw new ArgumentNullException(nameof(dbAccess));
     _service = new CsvParserService();
   }
+
   public void OnStart()
   {
-    string inputPath = UserInput.GetUserPath().Trim('"');
-    FileInfo filePath = new FileInfo(inputPath);
-    int headerRow = UserInput.GetRowOptions("What line are your column names on?");
-    int dataStart = UserInput.GetRowOptions("What line does your row data start on?");
-    Response<Dictionary<string, object>> response;
-    Console.WriteLine("FULLNAME: " + filePath.FullName);
+    _dbAccess.DropAllTables();
     try
     {
-      if (filePath.FullName.EndsWith("csv"))
+      string inputPath = UserInput.GetUserPath().Trim('"');
+      if (!File.Exists(inputPath))
       {
-        response = _service.ParseCsv(filePath, headerRow, dataStart);
-        List<string> colNames = response.ColumnNames;
-        var excelTable = new GenericTable(Path.GetFileNameWithoutExtension(filePath.Name), colNames, response.RowValues);
-        excelTable.Show();
+        throw new FileNotFoundException("The specified file does not exist.", inputPath);
       }
-      else if (filePath.FullName.EndsWith(".xlsx") || filePath.Extension.ToLower() == ".xls")
+
+      FileInfo filePath = new FileInfo(inputPath);
+      string xlsxFilePath = Path.ChangeExtension(filePath.FullName, ".xlsx");
+
+      _service.ConvertCsvToXlsx(filePath.FullName, xlsxFilePath);
+
+      var newFilePath = new FileInfo(xlsxFilePath);
+      var response = _service.ParseCsvFromWorkbook(newFilePath,  1,  2);
+
+      if (response.RowValues.Count == 0)
       {
-        response = _service.ParseCsvFromWorkbook(filePath, headerRow, dataStart);
-        List<string> colNames = response.ColumnNames;
-        var excelTable = new GenericTable(Path.GetFileNameWithoutExtension(filePath.Name), colNames, response.RowValues);
-        excelTable.Show();
+        AnsiConsole.WriteLine("No data was parsed from the file.");
+        return;
       }
-      else
-      {
-        throw new InvalidDataException("Unsupported file type.");
-      }
-    }
-    catch (InvalidDataException ex)
-    {
-      AnsiConsole.WriteLine(ex.Message);
-      return;
+
+      var excelTable = new GenericTable(Path.GetFileNameWithoutExtension(filePath.Name), response.ColumnNames, response.RowValues);
+      excelTable.Show();
+      _dbAccess.SaveToDatabase(response);
+
+      AnsiConsole.WriteLine("Data has been successfully saved to the database.");
     }
     catch (Exception ex)
     {
-      AnsiConsole.WriteLine($"An error occurred: {ex.Message}");
-      return;
+      AnsiConsole.WriteException(ex);
     }
-
-    if (response.RowValues.Count == 0)
+    finally
     {
-      AnsiConsole.WriteLine("No data was parsed from the file.");
-      return;
+      AnsiConsole.WriteLine("Press Enter to exit...");
+      Console.ReadLine();
     }
-
-    _dbAccess.SaveToDatabase(response);
-    AnsiConsole.WriteLine("Press any key to exit...");
-    Console.ReadKey(true);
   }
 
+  public void Dispose()
+  {
+    (_dbAccess as IDisposable)?.Dispose();
+    (_service as IDisposable)?.Dispose();
+  }
 }
