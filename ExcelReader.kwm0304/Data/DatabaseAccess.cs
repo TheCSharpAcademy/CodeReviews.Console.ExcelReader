@@ -13,6 +13,18 @@ public class DatabaseAccess(string connectionString, string tableName = "csvRead
   private readonly string _tableName = tableName;
   private readonly Validation _validation = new();
 
+  public void CreateDatabase()
+  {
+    var builder = new SqlConnectionStringBuilder(_connectionString);
+    var databaseName = builder.InitialCatalog;
+
+    builder.InitialCatalog = "master";
+    using var connection = new SqlConnection(builder.ConnectionString);
+    connection.Open();
+
+    using var command = new SqlCommand($"IF DB_ID('{databaseName}') IS NULL CREATE DATABASE [{databaseName}]", connection);
+    command.ExecuteNonQuery();
+  }
   public void DropAllTables()
   {
     using var connection = new SqlConnection(_connectionString);

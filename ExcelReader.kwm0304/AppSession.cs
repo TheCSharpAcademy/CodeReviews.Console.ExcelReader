@@ -16,6 +16,7 @@ public class AppSession : IDisposable
 
   public void OnStart()
   {
+    _dbAccess.CreateDatabase();
     _dbAccess.DropAllTables();
     try
     {
