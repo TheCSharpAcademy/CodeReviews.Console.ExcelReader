@@ -19,6 +19,7 @@ public class AppSession : IDisposable
     _dbAccess.DropAllTables();
     try
     {
+      AnsiConsole.WriteLine("To use one of the example csv files, right click on the csv you want to use and select 'Copy Relative Path'");
       string inputPath = UserInput.GetUserPath().Trim('"');
       if (!File.Exists(inputPath))
       {

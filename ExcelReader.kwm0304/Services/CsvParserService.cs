@@ -15,6 +15,7 @@ public class CsvParserService
   public void ConvertCsvToXlsx(string csvFilePath, string xlsxFilePath)
   {
     var csvLines = File.ReadAllLines(csvFilePath);
+    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
     using var package = new ExcelPackage();
     var worksheet = package.Workbook.Worksheets.Add("Sheet1");
     for (int rowIndex = 0; rowIndex < csvLines.Length; rowIndex++)
@@ -30,6 +31,7 @@ public class CsvParserService
 
   public Response<List<Dictionary<string, object>>> ParseCsvFromWorkbook(FileInfo info, int colRow, int dataRow)
   {
+    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
     var response = new Response<List<Dictionary<string, object>>>();
     using var package = new ExcelPackage(info);
     if (package.Workbook.Worksheets.Count < 1)
