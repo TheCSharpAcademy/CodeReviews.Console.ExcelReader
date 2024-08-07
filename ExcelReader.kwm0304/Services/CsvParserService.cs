@@ -14,8 +14,9 @@ public class CsvParserService
   }
   public void ConvertCsvToXlsx(string csvFilePath, string xlsxFilePath)
   {
-    var csvLines = File.ReadAllLines(csvFilePath);
     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+    var csvLines = File.ReadAllLines(csvFilePath);
+
     using var package = new ExcelPackage();
     var worksheet = package.Workbook.Worksheets.Add("Sheet1");
     for (int rowIndex = 0; rowIndex < csvLines.Length; rowIndex++)
@@ -42,6 +43,14 @@ public class CsvParserService
     response.ColumnNames = worksheet.Cells[colRow, 1, colRow, worksheet.Dimension.End.Column]
         .Select(cell => _validation.NormalizeColumnName(cell.Text))
         .ToList();
+    int expectedColumnCount = worksheet.Dimension.End.Column;
+    if (response.ColumnNames.Count != expectedColumnCount)
+    {
+      while (response.ColumnNames.Count < expectedColumnCount)
+      {
+        response.ColumnNames.Add($"Column{response.ColumnNames.Count + 1}");
+      }
+    }
     response.Header = "Header";
     response.RowValues = [];
     for (int row = dataRow; row <= worksheet.Dimension.End.Row; row++)
@@ -50,7 +59,7 @@ public class CsvParserService
       for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
       {
         var cell = worksheet.Cells[row, col];
-        string colName = response.ColumnNames[col - 1];
+        string colName = col <= response.ColumnNames.Count ? response.ColumnNames[col - 1] : $"Column{col}";
         rowData[colName] = _validation.GetTypedCellValue(cell);
       }
       response.RowValues.Add(rowData);

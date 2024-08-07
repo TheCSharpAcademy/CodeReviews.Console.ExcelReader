@@ -21,7 +21,7 @@ public class GenericTable
     .Border(TableBorder.Markdown)
     .BorderStyle(new Style(foreground: Color.DarkCyan, decoration: Decoration.Bold));
 
-    table.AddColumns([.. Columns]);
+    table.AddColumns(Columns.ToArray());
     foreach (var row in Rows)
     {
       var rowValues = Columns.Select(col => row.TryGetValue(col, out object? value) ? value?.ToString() ?? "" : "").ToArray();

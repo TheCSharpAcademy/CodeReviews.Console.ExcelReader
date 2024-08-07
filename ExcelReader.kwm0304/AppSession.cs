@@ -20,7 +20,7 @@ public class AppSession : IDisposable
     _dbAccess.DropAllTables();
     try
     {
-      AnsiConsole.WriteLine("To use one of the example csv files, right click on the csv you want to use and select 'Copy Relative Path'");
+      AnsiConsole.WriteLine("To use one of the example csv files, right click on the csv you want to use and select 'Copy Path'");
       string inputPath = UserInput.GetUserPath().Trim('"');
       if (!File.Exists(inputPath))
       {
@@ -28,12 +28,21 @@ public class AppSession : IDisposable
       }
 
       FileInfo filePath = new(inputPath);
-      string xlsxFilePath = Path.ChangeExtension(filePath.FullName, ".xlsx");
+      FileInfo newInfo;
+      if (!filePath.FullName.EndsWith("xlsx"))
+      {
+        string xlsxFilePath = Path.ChangeExtension(filePath.FullName, ".xlsx");
 
-      _service.ConvertCsvToXlsx(filePath.FullName, xlsxFilePath);
+        _service.ConvertCsvToXlsx(filePath.FullName, xlsxFilePath);
 
-      var newFilePath = new FileInfo(xlsxFilePath);
-      var response = _service.ParseCsvFromWorkbook(newFilePath,  1,  2);
+        newInfo = new FileInfo(xlsxFilePath);
+      }
+      else
+      {
+        newInfo = filePath;
+      }
+
+      var response = _service.ParseCsvFromWorkbook(newInfo, 1, 2);
 
       if (response.RowValues.Count == 0)
       {
