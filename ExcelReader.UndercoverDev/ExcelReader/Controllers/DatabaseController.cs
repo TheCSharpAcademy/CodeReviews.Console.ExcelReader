@@ -9,7 +9,7 @@ public class DatabaseController
     private readonly DatabaseService _databaseService;
     private readonly ExcelReaderController _excelReader;
 
-    public DatabaseController(DatabaseService databaseService, ExcelReaderController excelReader, Logger logger)
+    public DatabaseController(DatabaseService databaseService, ExcelReaderController excelReader)
     {
         _databaseService = databaseService;
         _excelReader = excelReader;
@@ -38,6 +38,12 @@ public class DatabaseController
     public void DisplayData()
     {
         var data = FetchData();
+        
+        if (data.Count == 0)
+        {
+            AnsiConsole.MarkupLine("[yellow]No data found in the database.[/]");
+            return;
+        }
 
         Logger.Log("Displaying data:");
         Logger.DisplayData(data);
