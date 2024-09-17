@@ -1,26 +1,34 @@
-
+using ExcelReader.Data;
 using ExcelReader.Models;
 
 namespace ExcelReader.Services;
 public class DatabaseService
 {
-    internal void CreateDatabase()
+    private readonly AppDbContext _dbContext;
+
+    public DatabaseService(AppDbContext dbContext)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
     }
 
     internal void DeleteDatabase()
     {
-        throw new NotImplementedException();
+        _dbContext.Database.EnsureDeleted();
+    }
+
+    internal void CreateDatabase()
+    {
+        _dbContext.Database.EnsureCreated();
+    }
+
+    internal void InsertData(List<DataModel> data)
+    {
+        _dbContext.DataModels.AddRange(data);
+        _dbContext.SaveChanges();
     }
 
     internal List<DataModel> GetAllData()
     {
-        throw new NotImplementedException();
-    }
-
-    internal void InsertData(object data)
-    {
-        throw new NotImplementedException();
+        return [.. _dbContext.DataModels];
     }
 }
