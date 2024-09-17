@@ -13,6 +13,6 @@ public class ExcelReaderController
 
     public List<DataModel> ReadExcelData()
     {
-        throw new NotImplementedException();
+        return _excelService.ReadExcel();
     }
 }
