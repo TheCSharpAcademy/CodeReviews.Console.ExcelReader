@@ -1,9 +1,10 @@
+using Spectre.Console;
 
 namespace ExcelReader.Utilities;
 public class Logger
 {
-    internal void Log(string v)
+    internal static void Log(string message)
     {
-        throw new NotImplementedException();
+        AnsiConsole.MarkupLine($"[bold][green]message[/][/]");
     }
 }

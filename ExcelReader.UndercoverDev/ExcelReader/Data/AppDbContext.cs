@@ -10,4 +10,9 @@ public class AppDbContext : DbContext
     {
         optionsBuilder.UseSqlite("Data Source=ExcelToDb.db");
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<DataModel>().HasNoKey();
+    }
 }

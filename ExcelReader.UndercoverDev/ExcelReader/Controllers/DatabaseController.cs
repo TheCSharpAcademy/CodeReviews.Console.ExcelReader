@@ -18,16 +18,16 @@ public class DatabaseController
 
     public void InitializeDatabase()
     {
-        _logger.Log("Deleting existing database...");
+        Logger.Log("Deleting existing database...");
         _databaseService.DeleteDatabase();
 
-        _logger.Log("Creating new database...");
+        Logger.Log("Creating new database...");
         _databaseService.CreateDatabase();
 
-        _logger.Log("Reading data from Excel...");
+        Logger.Log("Reading data from Excel...");
         var data = _excelReader.ReadExcelData();
 
-        _logger.Log("Inserting data into database...");
+        Logger.Log("Inserting data into database...");
         _databaseService.InsertData(data);
     }
 
