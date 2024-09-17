@@ -1,19 +1,18 @@
 using ExcelReader.Models;
 using ExcelReader.Services;
 using ExcelReader.Utilities;
+using Spectre.Console;
 
 namespace ExcelReader.Controllers;
 public class DatabaseController
 {
     private readonly DatabaseService _databaseService;
     private readonly ExcelReaderController _excelReader;
-    private readonly Logger _logger;
 
     public DatabaseController(DatabaseService databaseService, ExcelReaderController excelReader, Logger logger)
     {
         _databaseService = databaseService;
         _excelReader = excelReader;
-        _logger = logger;
     }
 
     public void InitializeDatabase()
@@ -36,11 +35,11 @@ public class DatabaseController
         return _databaseService.GetAllData();
     }
 
-    public void DisplayData(List<DataModel> data)
+    public void DisplayData()
     {
-        foreach (var item in data)
-        {
-            Console.WriteLine($"Date: {item.Date}, League: {item.League}, Home: {item.Home}, Away: {item.Away}, Home Probability: {item.HomeProbability}, Away Probability: {item.AwayProbability}, Over Two Goals: {item.OverTwoGoals}");
-        }
+        var data = FetchData();
+
+        Logger.Log("Displaying data:");
+        Logger.DisplayData(data);
     }
 }

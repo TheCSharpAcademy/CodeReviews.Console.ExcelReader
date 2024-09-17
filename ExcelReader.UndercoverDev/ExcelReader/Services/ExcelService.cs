@@ -1,19 +1,25 @@
 using ExcelReader.Models;
 using OfficeOpenXml;
+using Spectre.Console;
 
 namespace ExcelReader.Services;
 public class ExcelService
 {
     internal List<DataModel> ReadExcel()
     {
-        var filePath = "../Resources/matches.xlsx";
+        var filePath = "/home/nelson/Desktop/C#/AcadamyC#/ExcelReader/ExcelReader.UndercoverDev/ExcelReader/Resources/matches.xlsx";
         var data = new List<DataModel>();
 
-        // Read data from Excel file and populate the data list
         using var package = new ExcelPackage(new FileInfo(filePath));
 
-        var workSheet = package.Workbook.Worksheets[0];
-        var rowCount = workSheet.Dimension.Rows;
+        if (package.Workbook.Worksheets.Count == 0)
+        {
+            AnsiConsole.MarkupLine("[red]The Excel file does not contain any worksheets.[/]");
+            return data;
+        }
+
+        var workSheet = package.Workbook.Worksheets[0]; // Use index 0 for the first worksheet
+        var rowCount = workSheet.Dimension?.Rows ?? 0;
 
         for (var row = 2; row <= rowCount; row++)
         {

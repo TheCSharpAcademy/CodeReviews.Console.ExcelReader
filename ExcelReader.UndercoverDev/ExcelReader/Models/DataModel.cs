@@ -1,6 +1,7 @@
 namespace ExcelReader.Models;
 public class DataModel
 {
+    public int Id { get; set; }
     public required string Date { get; set; }
     public required string League { get; set; }
     public required string Home { get; set; }
