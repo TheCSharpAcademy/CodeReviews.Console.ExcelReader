@@ -10,9 +10,13 @@ namespace ExcelReader.Service
         private Context context;
         public Service()
         {
-            SetFilePath();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             context = new Context();
+        }
+        
+        public void Initialize()
+        {
+            SetFilePath();
             WorkFlow();
             Console.WriteLine("\nPress any button to close the app.");
             Console.ReadLine();

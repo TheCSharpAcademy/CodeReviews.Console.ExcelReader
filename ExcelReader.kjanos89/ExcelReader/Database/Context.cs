@@ -1,6 +1,5 @@
 ﻿using ExcelReader.Model;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 
 namespace ExcelReader.Database
 {
@@ -23,7 +22,7 @@ namespace ExcelReader.Database
             Console.WriteLine("Configuring database...");
             if (!optionsBuilder.IsConfigured)
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["ExcelReaderDB"]?.ConnectionString;
+                string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["ExcelReaderDB"]?.ConnectionString;
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }

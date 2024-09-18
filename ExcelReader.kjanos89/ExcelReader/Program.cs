@@ -6,5 +6,6 @@ class Program
     {
         Console.WriteLine("Loading, please wait...");
         Service service = new Service();
+        service.Initialize();
     }
 }
