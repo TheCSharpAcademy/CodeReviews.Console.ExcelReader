@@ -6,7 +6,7 @@ public class Logger
 {
     internal static void Log(string message)
     {
-        AnsiConsole.MarkupLine($"[bold][green]{message}[/][/]");
+        AnsiConsole.MarkupLine(message);
     }
 
     internal static void DisplayData (List<DataModel> dataModels)

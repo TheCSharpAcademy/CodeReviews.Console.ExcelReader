@@ -1,7 +1,6 @@
 using ExcelReader.Models;
 using ExcelReader.Services;
 using ExcelReader.Utilities;
-using Spectre.Console;
 
 namespace ExcelReader.Controllers;
 public class DatabaseController
@@ -22,10 +21,10 @@ public class DatabaseController
 
     public void InitializeDatabase()
     {
-        Logger.Log("Deleting existing database...");
+        Logger.Log("[bold][green]Deleting existing database...[/][/]");
         _databaseService.DeleteDatabase();
 
-        Logger.Log("Creating new database...");
+        Logger.Log("[bold][green]Creating new database...[/][/]");
         _databaseService.CreateDatabase();
 
         ReadExcelData();
@@ -33,16 +32,16 @@ public class DatabaseController
 
     public void ReadExcelData()
     {
-        Logger.Log("Reading data from Excel...");
+        Logger.Log("[bold][green]Reading data from Excel...[/][/]");
         var data = _excelReader.ReadExcelData();
         InsertDataIntoDatabase(data);
     }
 
     private void InsertDataIntoDatabase(List<DataModel> data)
     {
-        Logger.Log("Inserting data into database...");
+        Logger.Log("[bold][green]Inserting data into database...[/][/]");
         _databaseService.InsertData(data);
-        Logger.Log("Data inserted into database.");
+        Logger.Log("[bold][green]Data inserted into database.[/][/]");
 
         DisplayData();
     }
@@ -58,11 +57,11 @@ public class DatabaseController
         
         if (data.Count == 0)
         {
-            AnsiConsole.MarkupLine("[yellow]No data found in the database.[/]");
+            Logger.Log("[bold][yellow]No data found in the database.[/][/]");
             return;
         }
 
-        Logger.Log("Displaying data:");
+        Logger.Log("[bold][green]Displaying data:[/][/]");
         Logger.DisplayData(data);
     }
 }
