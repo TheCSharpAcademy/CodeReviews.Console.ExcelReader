@@ -15,6 +15,11 @@ public class DatabaseController
         _excelReader = excelReader;
     }
 
+    public void RunApp()
+    {
+        InitializeDatabase();
+    }
+
     public void InitializeDatabase()
     {
         Logger.Log("Deleting existing database...");
@@ -23,11 +28,23 @@ public class DatabaseController
         Logger.Log("Creating new database...");
         _databaseService.CreateDatabase();
 
+        ReadExcelData();
+    }
+
+    public void ReadExcelData()
+    {
         Logger.Log("Reading data from Excel...");
         var data = _excelReader.ReadExcelData();
+        InsertDataIntoDatabase(data);
+    }
 
+    private void InsertDataIntoDatabase(List<DataModel> data)
+    {
         Logger.Log("Inserting data into database...");
         _databaseService.InsertData(data);
+        Logger.Log("Data inserted into database.");
+
+        DisplayData();
     }
 
     public List<DataModel> FetchData()
