@@ -34,6 +34,13 @@ public class DatabaseController
     {
         Logger.Log("[bold][green]Reading data from Excel...[/][/]");
         var data = _excelReader.ReadExcelData();
+
+        if (data.Count == 0)
+        {
+            Logger.Log("[bold][yellow]No data found in the Excel file.[/][/]");
+            return;
+        }
+        
         InsertDataIntoDatabase(data);
     }
 

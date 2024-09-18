@@ -19,13 +19,13 @@ public class ExcelService
             {
 
                 var workSheet = package.Workbook.Worksheets[0]; // Use index 0 for the first worksheet
-                var rowCount = workSheet.Dimension?.Rows ?? 0;
-
-                if (rowCount < 2)
+                if (workSheet.Dimension == null || workSheet.Cells.All(cell => cell.Value == null))
                 {
-                    Logger.Log("[bold][yellow]Excel file has less than two rows.[/][/]");
+                    Logger.Log("[bold][yellow]Excel file has no data.[/][/]");
                     return data;
                 }
+
+                var rowCount = workSheet.Dimension?.Rows ?? 0;
 
                 for (var row = 2; row <= rowCount; row++)
                 {
