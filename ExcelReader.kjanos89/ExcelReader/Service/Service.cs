@@ -1,7 +1,6 @@
 ﻿using ExcelReader.Database;
 using ExcelReader.Model;
 using OfficeOpenXml;
-using System.Net.Http.Headers;
 
 namespace ExcelReader.Service
 {
@@ -21,7 +20,6 @@ namespace ExcelReader.Service
 
         public void SetFilePath()
         {
-            Console.Clear();
             Console.WriteLine("Setting filepath to:");
             try
             {
@@ -73,8 +71,7 @@ namespace ExcelReader.Service
         }
 
         private void DisplayData()
-        {
-            Console.Clear();
+        { 
             List<ExcelData> list = new List<ExcelData>();
             try
             {
@@ -89,6 +86,7 @@ namespace ExcelReader.Service
                 Console.WriteLine("No data found in the database.");
                 return;
             }
+            Console.Clear();
             foreach (ExcelData data in list)
             {
                 Console.WriteLine($"Item's name: {data.Name}. Item's price: {data.Price}");

@@ -20,7 +20,6 @@ namespace ExcelReader.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            Console.Clear();
             Console.WriteLine("Configuring database...");
             if (!optionsBuilder.IsConfigured)
             {
