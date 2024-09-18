@@ -1,6 +1,6 @@
 using ExcelReader.Models;
+using ExcelReader.Utilities;
 using OfficeOpenXml;
-using Spectre.Console;
 
 namespace ExcelReader.Services;
 public class ExcelService
@@ -21,6 +21,12 @@ public class ExcelService
                 var workSheet = package.Workbook.Worksheets[0]; // Use index 0 for the first worksheet
                 var rowCount = workSheet.Dimension?.Rows ?? 0;
 
+                if (rowCount < 2)
+                {
+                    Logger.Log("[bold][yellow]Excel file has less than two rows.[/][/]");
+                    return data;
+                }
+
                 for (var row = 2; row <= rowCount; row++)
                 {
                     var dataModel = new DataModel
@@ -38,14 +44,14 @@ public class ExcelService
             }
             else
             {
-                AnsiConsole.MarkupLine("[yellow]No worksheets found in the Excel file.[/]");
+                Logger.Log("[bold][yellow]No worksheets found in the Excel file.[/][/]");
                 return data;
             }
             return data;
         }
         catch (Exception ex)
         {
-            AnsiConsole.MarkupLine($"[red]Error reading Excel file: {ex.Message}[/]");
+            Logger.Log($"[red]Error reading Excel file: {ex.Message}[/]");
             return data;
         }
     }
