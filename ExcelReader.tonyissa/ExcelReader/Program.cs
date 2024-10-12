@@ -1,7 +1,8 @@
-using ExcelReader;
+using ExcelReader.Services;
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+
+builder.Services.AddTransient<FileProcesser>();
+
 
 var host = builder.Build();
-await host.RunAsync();
