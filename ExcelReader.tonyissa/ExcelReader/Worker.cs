@@ -5,23 +5,15 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private readonly string[] _filenames;
 
-    public Worker(ILogger<Worker> logger, IConfiguration config)
+    public Worker(ILogger<Worker> logger)
     {
         _logger = logger;
-        _filenames = config.GetSection("ExcelFilenames").Get<string[]>();
 
-        if (_filenames == null) 
-            throw new ArgumentNullException(nameof(config), "No filenames found. Please update configuration.");
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "Files");
+        _filenames = Directory.GetFiles(path, "*.xls?");
 
-        var path = Path.Combine(Directory.GetCurrentDirectory(), "Data");
-
-        foreach (var filename in _filenames)
-        {
-            var fileLocation = Path.Combine(path, filename);
-
-            if (!Path.Exists(fileLocation)) 
-                throw new FileNotFoundException($"Could not find {filename}");
-        }
+        if (_filenames.Length == 0)
+            throw new FileNotFoundException(".xls or .xlsx files not found in Files folder. Please add some and then try again.");
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
