@@ -3,6 +3,6 @@
 interface IExcelRepository<TEntity>
     where TEntity : class
 {
-    Task AddNewEntry(TEntity entry);
-    Task<TEntity[]> GetAllEntries();
+    Task CommitEntryAsync(TEntity entry);
+    Task<TEntity[]> RetrieveEntriesAsync();
 }

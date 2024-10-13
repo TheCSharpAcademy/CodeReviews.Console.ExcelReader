@@ -15,13 +15,13 @@ public class ExcelRepository<TEntity, TContext> : IExcelRepository<TEntity>
         _context = context;
     }
 
-    public async Task AddNewEntry(TEntity entry)
+    public async Task CommitEntryAsync(TEntity entry)
     {
         _dbSet.Add(entry);
         await _context.SaveChangesAsync();
     }
 
-    public async Task<TEntity[]> GetAllEntries()
+    public async Task<TEntity[]> RetrieveEntriesAsync()
     {
         return await _dbSet.ToArrayAsync();
     }
