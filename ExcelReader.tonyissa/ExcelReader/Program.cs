@@ -23,6 +23,14 @@ var host = builder.Build();
 using var scope = host.Services.CreateScope();
 var scopedProvider = scope.ServiceProvider;
 
+var logger = scopedProvider.GetRequiredService<ILogger<Program>>();
+var context = scopedProvider.GetRequiredService<ExcelContext>();
+
+logger.LogInformation("Deleting database...");
+context.Database.EnsureDeleted();
+logger.LogInformation("Creating database...");
+context.Database.EnsureCreated();
+
 var app = scopedProvider.GetRequiredService<ExcelReaderService>();
 
 await app.ExecuteServiceAsync();
