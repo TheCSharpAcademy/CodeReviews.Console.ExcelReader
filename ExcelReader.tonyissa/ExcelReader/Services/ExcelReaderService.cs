@@ -1,19 +1,15 @@
-using ExcelReader.Data;
-using ExcelReader.Models;
-using ExcelReader.Repositories;
-
 namespace ExcelReader.Services;
 
 public class ExcelReaderService
 {
     private readonly ILogger<ExcelReaderService> _logger;
-    private readonly IExcelRepository<ExcelFile> _repository;
+    private readonly FileProcesserService _fileProcesserService;
     private readonly string[] _filenames;
 
-    public ExcelReaderService(ILogger<ExcelReaderService> logger, ExcelRepository<ExcelFile, ExcelContext> repository)
+    public ExcelReaderService(ILogger<ExcelReaderService> logger, FileProcesserService fileProcesserService)
     {
         _logger = logger;
-        _repository = repository;
+        _fileProcesserService = fileProcesserService;
 
         var path = Path.Combine(Directory.GetCurrentDirectory(), "Files");
         _filenames = Directory.GetFiles(path, "*.xls?");
@@ -22,7 +18,7 @@ public class ExcelReaderService
             throw new FileNotFoundException(".xls or .xlsx files not found in Files folder. Please add some and then try again.");
     }
 
-    public async Task ProcessFilesAsync()
+    public async Task ExecuteServiceAsync()
     {
         _logger.LogInformation("FileProcesser running at: {time}", DateTimeOffset.Now.ToString("g"));
 
@@ -35,10 +31,9 @@ public class ExcelReaderService
                 _logger.LogInformation("Service {iter}/{max} starting at: {time}",
                     i + 1, _filenames.Length, DateTimeOffset.Now.ToString("g"));
 
-                var newwy = new ExcelFile($"Name{i+1}", 1);
-                await _repository.CommitEntryAsync(newwy);
+                await _fileProcesserService.ProcessFilesAsync(_filenames[i]);
 
-                _logger.LogInformation("Entry uploaded successfully. Service {iter}/{max} stopping at: {time}",
+                _logger.LogInformation("Service {iter}/{max} stopping at: {time}",
                     i + 1, _filenames.Length, DateTimeOffset.Now.ToString("g"));
             }));
         }
