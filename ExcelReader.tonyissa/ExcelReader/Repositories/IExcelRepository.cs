@@ -1,6 +1,9 @@
-﻿namespace ExcelReader.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
 
-interface IExcelRepository<TEntity>
+namespace ExcelReader.Repositories;
+
+public interface IExcelRepository<TEntity, TContext>
+    where TContext : DbContext
     where TEntity : class
 {
     Task CommitEntryAsync(TEntity entry);

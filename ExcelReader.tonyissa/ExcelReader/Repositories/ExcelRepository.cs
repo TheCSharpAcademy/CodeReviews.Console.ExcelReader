@@ -2,7 +2,7 @@
 
 namespace ExcelReader.Repositories;
 
-public class ExcelRepository<TEntity, TContext> : IExcelRepository<TEntity>
+public class ExcelRepository<TEntity, TContext> : IExcelRepository<TEntity, TContext>
     where TContext : DbContext
     where TEntity : class
 {
@@ -11,8 +11,8 @@ public class ExcelRepository<TEntity, TContext> : IExcelRepository<TEntity>
 
     public ExcelRepository(TContext context)
     {
-        _dbSet = context.Set<TEntity>();
         _context = context;
+        _dbSet = context.Set<TEntity>();
     }
 
     public async Task CommitEntryAsync(TEntity entry)

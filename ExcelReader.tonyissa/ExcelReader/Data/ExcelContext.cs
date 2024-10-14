@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExcelReader.Data;
 
-public class ExcelContext : DbContext
+public class ExcelContext(DbContextOptions<ExcelContext> options) : DbContext(options)
 {
-    public DbSet<ExcelFile> ExcelFiles { get; set; }
+    public DbSet<ExcelData> Data { get; set; }
 }
