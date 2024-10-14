@@ -20,26 +20,21 @@ public class ExcelReaderService
 
     public async Task ExecuteServiceAsync()
     {
-        _logger.LogInformation("FileProcesser running at: {time}", DateTimeOffset.Now.ToString("g"));
+        _logger.LogInformation("ExcelReaderService running at: {time}", DateTimeOffset.Now.ToString("g"));
 
-        var results = new List<Task>();
-
-        for (int i = 0; i < _filenames.Length; i++)
+        for (int i = 1; i <= _filenames.Length; i++)
         {
-            results.Add(Task.Run(async () =>
-            {
-                _logger.LogInformation("Service {iter}/{max} starting at: {time}",
-                    i + 1, _filenames.Length, DateTimeOffset.Now.ToString("g"));
+            var currentIteration = i;
 
-                await _fileProcesserService.ProcessFilesAsync(_filenames[i]);
+            _logger.LogInformation("FileProcesserService {iter}/{max} starting at: {time}",
+                currentIteration, _filenames.Length, DateTimeOffset.Now.ToString("g"));
 
-                _logger.LogInformation("Service {iter}/{max} stopping at: {time}",
-                    i + 1, _filenames.Length, DateTimeOffset.Now.ToString("g"));
-            }));
+            await _fileProcesserService.ProcessFilesAsync(_filenames[currentIteration - 1]);
+
+            _logger.LogInformation("FileProcesserService {iter}/{max} stopping at: {time}",
+                currentIteration, _filenames.Length, DateTimeOffset.Now.ToString("g"));
         }
 
-        await Task.WhenAll(results);
-
-        _logger.LogInformation("FileProcesser stopping at: {time}", DateTimeOffset.Now.ToString("g"));
+        _logger.LogInformation("ExcelReaderService stopping at: {time}", DateTimeOffset.Now.ToString("g"));
     }
 }

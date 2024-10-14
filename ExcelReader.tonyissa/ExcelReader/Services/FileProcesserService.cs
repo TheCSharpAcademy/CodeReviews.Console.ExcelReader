@@ -28,21 +28,18 @@ public class FileProcesserService
 
         for (int row = 2; row <= rowCount; row++)
         {
-            results.Add(Task.Run(async () =>
+            var currentRow = row;
+
+            _logger.LogInformation("Extracting row {row} of {count}", currentRow, rowCount);
+
+            var newRecord = new ExcelData
             {
-                _logger.LogInformation("Extracting row {row} of {count}", row, rowCount);
+                Name = ws.Cells[currentRow, 1].Text,
+                Amount = decimal.Parse(ws.Cells[currentRow, 2].Text)
+            };
 
-                var newRecord = new ExcelData
-                {
-                    Name = ws.Cells[row, 1].Text,
-                    Amount = double.Parse(ws.Cells[row, 2].Text)
-                };
-
-                _logger.LogInformation("Committing row {row} of {count} to database", row, rowCount);
-                await _repository.CommitEntryAsync(newRecord);
-            }));
+            _logger.LogInformation("Committing row {row} of {count} to database", currentRow, rowCount);
+            await _repository.CommitEntryAsync(newRecord);
         }
-
-        await Task.WhenAll(results);
     }
 }
