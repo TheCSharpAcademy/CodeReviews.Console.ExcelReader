@@ -22,9 +22,6 @@ public class FileProcesserService
 
         var ws = p.Workbook.Worksheets[0];
         int rowCount = ws.Dimension.Rows;
-        int colCount = ws.Dimension.Columns;
-
-        var results = new List<Task>();
 
         for (int row = 2; row <= rowCount; row++)
         {
