@@ -2,6 +2,7 @@
 using ExcelReader.Models;
 using ExcelReader.Repositories;
 using OfficeOpenXml;
+using Spectre.Console;
 
 namespace ExcelReader.Services;
 
@@ -38,5 +39,20 @@ public class FileProcesserService
             _logger.LogInformation("Committing row {row} of {count} to database", currentRow, rowCount);
             await _repository.CommitEntryAsync(newRecord);
         }
+    }
+
+    public async Task DisplayListAfterFinished()
+    {
+        var list = await _repository.RetrieveEntriesAsync();
+
+        var table = new Table { Title = new TableTitle("Entries") };
+        table.AddColumns("Id", "Name", "Amount");
+
+        foreach (var item in list)
+        {
+            table.AddRow(item.Id.ToString(), item.Name, item.Amount.ToString());
+        }
+
+        AnsiConsole.Write(table);
     }
 }

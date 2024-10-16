@@ -1,8 +1,10 @@
 using ExcelReader.Data;
+using ExcelReader.Models;
 using ExcelReader.Repositories;
 using ExcelReader.Services;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using Spectre.Console;
 
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 

@@ -35,6 +35,8 @@ public class ExcelReaderService
                 currentIteration, _filenames.Length, DateTimeOffset.Now.ToString("g"));
         }
 
+        await _fileProcesserService.DisplayListAfterFinished();
+
         _logger.LogInformation("ExcelReaderService stopping at: {time}", DateTimeOffset.Now.ToString("g"));
     }
 }
