@@ -28,7 +28,7 @@ public class FileProcesserService
         {
             var currentRow = row;
 
-            _logger.LogInformation("Extracting row {row} of {count}", currentRow, rowCount);
+            _logger.LogInformation("Extracting row {row} of {count}", currentRow - 1, rowCount - 1);
 
             var newRecord = new ExcelData
             {
@@ -36,7 +36,7 @@ public class FileProcesserService
                 Amount = decimal.Parse(ws.Cells[currentRow, 2].Text)
             };
 
-            _logger.LogInformation("Committing row {row} of {count} to database", currentRow, rowCount);
+            _logger.LogInformation("Committing row {row} of {count} to database", currentRow - 1, rowCount - 1);
             await _repository.CommitEntryAsync(newRecord);
         }
     }
