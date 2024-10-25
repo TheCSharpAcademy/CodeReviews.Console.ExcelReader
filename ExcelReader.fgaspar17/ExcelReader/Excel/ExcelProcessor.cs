@@ -25,8 +25,6 @@ public class ExcelProcessor(string excelPath)
             AnsiConsole.WriteLine($"Inserting the data for the Worksheet {i + 1} ...");
             InsertData(columnValues, tableName);
 
-            // Console output for the data
-            //OutputRenderer.ShowTable(columnValues, tableName);
             AnsiConsole.WriteLine();
         }
 

@@ -1,4 +1,6 @@
-﻿namespace ExcelReader;
+﻿using Spectre.Console;
+
+namespace ExcelReader;
 
 public static class PathValidator
 {
@@ -12,9 +14,9 @@ public static class PathValidator
             fi = new System.IO.FileInfo(path);
             if (!fi.Exists) return false;
         }
-        catch (ArgumentException) { }
-        catch (System.IO.PathTooLongException) { }
-        catch (NotSupportedException) { }
+        catch (ArgumentException ex) { AnsiConsole.WriteException(ex); }
+        catch (System.IO.PathTooLongException ex) { AnsiConsole.WriteException(ex); }
+        catch (NotSupportedException ex) { AnsiConsole.WriteException(ex); }
         if (ReferenceEquals(fi, null))
         {
             return false;
@@ -42,9 +44,9 @@ public static class PathValidator
         {
             fi = new System.IO.FileInfo(path);
         }
-        catch (ArgumentException) { }
-        catch (System.IO.PathTooLongException) { }
-        catch (NotSupportedException) { }
+        catch (ArgumentException ex) { AnsiConsole.WriteException(ex); }
+        catch (System.IO.PathTooLongException ex) { AnsiConsole.WriteException(ex); }
+        catch (NotSupportedException ex) { AnsiConsole.WriteException(ex); }
         if (ReferenceEquals(fi, null))
         {
             return false;

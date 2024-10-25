@@ -40,7 +40,6 @@ public class ExcelController
 
     public static List<Dictionary<string, string>> GetDataFromTable(string table, string connStr)
     {
-        var result = new List<Dictionary<string, string>>();
         string sql = $@"SELECT * FROM ""{table}"" ";
 
         try
@@ -63,7 +62,6 @@ public class ExcelController
 
     public static List<string> GetColumnsFromTable(string table, string connStr)
     {
-        var result = new List<string>();
         string sql = $@"SELECT NAME FROM pragma_table_info(""{table}"") ;";
 
         try
