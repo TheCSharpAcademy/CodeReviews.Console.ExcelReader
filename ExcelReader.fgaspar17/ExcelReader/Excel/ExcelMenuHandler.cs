@@ -47,7 +47,6 @@ public class ExcelMenuHandler(string currentWorkSheet)
         for (int i = 0; i < workSheetCount; i++)
         {
             string workSheetName = excelReader.GetWorkSheetName(fileInfo, i);
-            var columns = excelReader.GetColumns(fileInfo, i);
 
             var data = ExcelController.GetDataFromTable(workSheetName, GlobalConfig.ConnectionString!);
             workSheets.Add(new WorkSheet

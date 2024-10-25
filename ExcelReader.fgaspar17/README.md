@@ -1,4 +1,5 @@
 # ExcelReader
+
 A console-based application to load an Excel file dynamically,
 allowing you to view the data and add rows.
 
@@ -67,7 +68,7 @@ xls file that can be read by your application.
 - LINQ.
 - SQLite metadata knowledge.
 
-##  Resources used
+## Resources used
 
 - StackOverflow posts
 - [EPPlus Documentation](https://epplussoftware.com/en/Developers/)
