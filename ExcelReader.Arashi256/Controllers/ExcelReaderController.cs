@@ -123,7 +123,7 @@ namespace ExcelReader.Arashi256.Controllers
                 // Drop and recreate the database
                 _dbContext.Database.EnsureDeleted();
                 _dbContext.Database.EnsureCreated();
-                await Run(cancellationToken);
+                await Run();
             }
             finally
             {
