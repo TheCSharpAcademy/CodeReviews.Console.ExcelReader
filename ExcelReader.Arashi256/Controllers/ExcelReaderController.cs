@@ -28,7 +28,7 @@ namespace ExcelReader.Arashi256.Controllers
             _fileOutputService = os;
         }
 
-        private async Task Run(CancellationToken cancellationToken)
+        private async Task Run()
         {
             var errors = new List<string>();
             _logger.LogInformation("Starting controller task...");
