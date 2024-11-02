@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelReader.Arashi256", "ExcelReader.Arashi256.csproj", "{E758BCA3-80D0-488B-8278-EEE15555E2FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E758BCA3-80D0-488B-8278-EEE15555E2FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E758BCA3-80D0-488B-8278-EEE15555E2FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E758BCA3-80D0-488B-8278-EEE15555E2FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E758BCA3-80D0-488B-8278-EEE15555E2FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4CAF51A9-3919-48ED-B361-AC7D0840E2EF}
+	EndGlobalSection
+EndGlobal
