@@ -1,6 +1,5 @@
 ﻿using ExcelReader.TwilightSaw.Controller;
 using ExcelReader.TwilightSaw.Factory;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +11,7 @@ var configuration = scope.GetRequiredService<IConfiguration>();
 
 var readerController = new ReaderController();
 
-var dbFactory = new DbFactory(configuration, readerController);
+var dbFactory = new DbController(configuration, readerController);
 dbFactory.CreateDb();
-dbFactory.CreateTable();
+dbFactory.CreateTable(out var name);
+dbFactory.Read();
