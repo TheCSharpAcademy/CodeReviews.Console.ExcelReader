@@ -13,5 +13,5 @@ var readerController = new ReaderController();
 
 var dbFactory = new DbController(configuration, readerController);
 dbFactory.CreateDb();
-dbFactory.CreateTable(out var name);
+dbFactory.CreateTable();
 dbFactory.Read();

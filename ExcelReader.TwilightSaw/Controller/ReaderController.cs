@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using System.Text.RegularExpressions;
+using OfficeOpenXml;
 
 namespace ExcelReader.TwilightSaw.Controller;
 
@@ -6,24 +7,35 @@ public class ReaderController
 {
     private readonly string _filePath = @"C:\Users\Alex\source\repos\projects\CodeReviews.Console.ExcelReader\ExcelReader.TwilightSaw\db.xlsx";
 
-    public (List<List<string>> values, string name) Read()
+    public (List<(List<List<string>> table, string tableName)> tables, string dbName) Read()
     {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        using var package = new ExcelPackage(new FileInfo(_filePath));
+        
+            Console.WriteLine("Reading from excel file...");
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using var package = new ExcelPackage(new FileInfo(_filePath));
 
-        var worksheet = package.Workbook.Worksheets[0];
-        var rowCount = worksheet.Dimension.Rows;
-        var colCount = worksheet.Dimension.Columns;
+            var worksheets = package.Workbook.Worksheets;
 
-        var stringList = new List<List<string>>();
+            var worksheetList = new List<(List<List<string>>, string)>();
+            foreach (var worksheet in worksheets)
+            {
+                var rowCount = worksheet.Dimension.Rows;
+                var colCount = worksheet.Dimension.Columns;
 
-        for (var i = 1; i <= rowCount; i++)
-        {
-            var rowList = new List<string>();
-            for (var j = 1; j <= colCount; j++)
-                rowList.Add(worksheet.Cells[i, j].Value.ToString());
-            stringList.Add(rowList);
-        }
-        return (values: stringList, name: worksheet.Name);
+                var worksheetRows = new List<List<string>>();
+
+                for (var i = 1; i <= rowCount; i++)
+                {
+                    var rowValues = new List<string>();
+                    for (var j = 1; j <= colCount; j++)
+                        rowValues.Add(worksheet.Cells[i, j].Value.ToString());
+                    worksheetRows.Add(rowValues);
+                }
+                worksheetList.Add((worksheetRows, worksheet.Name));
+            }
+
+            var regex = new Regex(@"\.[a-z]");
+            return (tables: worksheetList, dbName: Path.GetFileNameWithoutExtension(_filePath));
+        
     }
 }

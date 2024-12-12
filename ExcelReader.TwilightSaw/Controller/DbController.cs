@@ -1,9 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Spectre.Console;
+using static OfficeOpenXml.ExcelErrorValue;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 using Table = Spectre.Console.Table;
 
@@ -12,72 +11,80 @@ namespace ExcelReader.TwilightSaw.Controller;
 public class DbController(IConfiguration configuration, ReaderController readerController)
 {
     private readonly SqlConnection _connection = new(configuration.GetConnectionString("DefaultConnection"));
-    public void CreateDb()
+    private readonly (List<(List<List<string>> table, string tableName)> tables, string dbName) _excelFile = readerController.Read();
+    public async void CreateDb()
     {
-        var data = readerController.Read();
-        using var connection = _connection;
+        Console.WriteLine("Creating database...");
+        await using var connection = _connection;
         var query = $"""
-                     IF EXISTS (SELECT name FROM sys.databases WHERE name = '{data.name}')
+                     IF EXISTS (SELECT name FROM sys.databases WHERE name = '{_excelFile.dbName}')
                                          BEGIN
-                                         ALTER DATABASE {data.name} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-                                         DROP DATABASE {data.name};
+                                         ALTER DATABASE {_excelFile.dbName} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                                         DROP DATABASE {_excelFile.dbName};
                                          END
-                     CREATE DATABASE {data.name}
+                     CREATE DATABASE {_excelFile.dbName}
                      """;
         connection.Execute(query);
+        Console.WriteLine("Database created!");
     }
 
-    public void CreateTable(out string name)
+    public async void CreateTable()
     {
-        var data = readerController.Read();
-        name = data.name;
-        for (var index = 0; index < data.values[0].Count; index++)
+        Console.WriteLine("Creating tables...");
+        foreach (var value in _excelFile.tables)
         {
-            var cell = data.values[0][index];
-            data.values[0][index] = cell + " TEXT";
+            var data = value.table.Select(i => i.ToList()).ToList();
+            for (var index = 0; index < data[0].Count; index++) data[0][index] += " TEXT";
+
+            var columns = string.Join(", ", data[0]);
+            var columns2 = string.Join(", ", value.table[0]);
+
+            var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
+            {
+                InitialCatalog = _excelFile.dbName
+            };
+            var dbConnection = builder.ConnectionString;
+            await using var connection = new SqlConnection(dbConnection);
+
+            connection.Execute($"CREATE TABLE {value.tableName} ({columns});");
+            for (var index = 1; index < value.table.Count; index++)
+            {
+                var t1 = value.table[index].Select(t => $"'{t}'");
+                var values = string.Join(", ", t1);
+                var sql = @$"INSERT INTO {value.tableName} ({columns2}) VALUES ({values});";
+                connection.Execute(sql);
+            }
         }
-
-        var columns = string.Join(", ", data.values[0]);
-        var columns2 = string.Join(", ", readerController.Read().values[0]);
-
-        var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
-        {
-            InitialCatalog = data.name
-        };
-        var dbConnection = builder.ConnectionString;
-        using var connection = new SqlConnection(dbConnection);
-
-        connection.Execute($"CREATE TABLE {data.name} ({columns});");
-        for (var index = 1; index < data.values.Count; index++)
-        {
-            var t1 = data.values[index].Select(t => $"'{t}'");
-            var values = string.Join(", ", t1);
-            var sql = @$"INSERT INTO {data.name} ({columns2}) VALUES ({values});";
-            connection.Execute(sql);
-        }
+        Console.WriteLine("Tables created!");
     }
 
-    public void Read()
+    public async void Read()
     {
-        var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
+        Console.WriteLine("Fetching data from the database...");
+        foreach (var value in _excelFile.tables)
         {
-            InitialCatalog = readerController.Read().name
-        };
-        using var connection = new SqlConnection(builder.ConnectionString);
-        var result = connection.Query($"SELECT * FROM {readerController.Read().name}").Select(r => (IDictionary<string, object>)r).ToList();
+            var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
+            {
+                InitialCatalog = _excelFile.dbName
+            };
 
-        var tablesColumns = new List<string>();
-        var tablesRows = result.Select(pairs => 
-            pairs.Select(pair => 
-                pair.Value.ToString()).
-                ToList()).
-            ToList();
+            await using var connection = new SqlConnection(builder.ConnectionString);
+            var result = connection.QueryAsync($"SELECT * FROM {value.tableName}").
+                Result.Select(r => (IDictionary<string, object>)r).ToList();
 
-        tablesColumns.AddRange(result[0].Keys);
+            var tablesColumns = new List<string>();
+            var tablesRows = result.Select(pairs =>
+                    pairs.Select(pair =>
+                            pair.Value.ToString()).
+                        ToList()).
+                ToList();
 
-        var table = new Table();
-        foreach (var r in tablesColumns) table.AddColumn(r);
-        foreach (var r in tablesRows) table.AddRow(r.ToArray());
-        AnsiConsole.Write(table);
+            tablesColumns.AddRange(result[0].Keys);
+
+            var table = new Table();
+            foreach (var r in tablesColumns) table.AddColumn(r);
+            foreach (var r in tablesRows) table.AddRow(r.ToArray());
+            AnsiConsole.Write(table);
+        }
     }
 }
