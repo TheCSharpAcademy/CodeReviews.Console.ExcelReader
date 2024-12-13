@@ -2,16 +2,15 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
-using static OfficeOpenXml.ExcelErrorValue;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 using Table = Spectre.Console.Table;
 
-namespace ExcelReader.TwilightSaw.Controller;
+namespace ExcelReader.TwilightSaw.Service;
 
-public class DbController(IConfiguration configuration, ReaderController readerController)
+public class DbService(IConfiguration configuration, ReaderService readerService)
 {
     private readonly SqlConnection _connection = new(configuration.GetConnectionString("DefaultConnection"));
-    private readonly (List<(List<List<string>> table, string tableName)> tables, string dbName) _excelFile = readerController.Read();
+    private readonly (List<(List<List<string>> table, string tableName)> tables, string dbName) _excelFile = readerService.ReadCsv();
     public async void CreateDb()
     {
         Console.WriteLine("Creating database...");
@@ -82,8 +81,8 @@ public class DbController(IConfiguration configuration, ReaderController readerC
             tablesColumns.AddRange(result[0].Keys);
 
             var table = new Table();
-            foreach (var r in tablesColumns) table.AddColumn(r);
-            foreach (var r in tablesRows) table.AddRow(r.ToArray());
+            foreach (var column in tablesColumns) table.AddColumn(column);
+            foreach (var row in tablesRows) table.AddRow(row.ToArray());
             AnsiConsole.Write(table);
         }
     }

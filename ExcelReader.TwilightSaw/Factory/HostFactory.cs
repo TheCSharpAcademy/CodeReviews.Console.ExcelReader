@@ -1,4 +1,4 @@
-﻿using ExcelReader.TwilightSaw.Controller;
+﻿using ExcelReader.TwilightSaw.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -12,8 +12,8 @@ internal class HostFactory
             .ConfigureServices((context, services) =>
             {
                 var configuration = context.Configuration;
-                services.AddSingleton<DbController>();
-                services.AddSingleton<ReaderController>();
+                services.AddSingleton<DbService>();
+                services.AddSingleton<ReaderService>();
             }).Build();
     }
 
