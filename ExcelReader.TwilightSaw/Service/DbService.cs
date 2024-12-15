@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using ExcelReader.TwilightSaw.Helper;
+using ExcelReader.TwilightSaw.Model;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
@@ -11,18 +12,18 @@ namespace ExcelReader.TwilightSaw.Service;
 public class DbService(IConfiguration configuration, ReaderService readerService)
 {
     private readonly SqlConnection _connection = new(configuration.GetConnectionString("DefaultConnection"));
-    private readonly (List<(List<List<string>> table, string tableName)> tables, string dbName) _file = readerService.ChooseFormat();
+    private readonly ReaderItem _file = readerService.ReadFormat();
     public async void CreateDb()
     {
         Console.WriteLine("Creating database...");
         await using var connection = _connection;
         var query = $"""
-                     IF EXISTS (SELECT name FROM sys.databases WHERE name = '{_file.dbName}')
+                     IF EXISTS (SELECT name FROM sys.databases WHERE name = '{_file.DbName}')
                                          BEGIN
-                                         ALTER DATABASE {_file.dbName} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-                                         DROP DATABASE {_file.dbName};
+                                         ALTER DATABASE {_file.DbName} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                                         DROP DATABASE {_file.DbName};
                                          END
-                     CREATE DATABASE {_file.dbName}
+                     CREATE DATABASE {_file.DbName}
                      """;
         connection.Execute(query);
         Console.WriteLine("Database created!");
@@ -31,17 +32,24 @@ public class DbService(IConfiguration configuration, ReaderService readerService
     public async void CreateTable()
     {
         Console.WriteLine("Creating tables...");
-        foreach (var value in _file.tables)
+        foreach (var value in _file.Tables)
         {
             var data = value.table.Select(i => i.ToList()).ToList();
-            for (var index = 0; index < data[0].Count; index++) data[0][index] += " TEXT";
+            for (var index = 0; index < data[0].Count; index++)
+            {
+                 data[0][index] = data[0][index].Replace(" ", "");
+                value.table[0][index] = data[0][index].Replace(" ", "");
+                data[0][index] += " TEXT";
+
+                Console.WriteLine($"Index {index}: {data[0][index]}");
+            }
 
             var columns = string.Join(", ", data[0]);
             var columns2 = string.Join(", ", value.table[0]);
 
             var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
             {
-                InitialCatalog = _file.dbName
+                InitialCatalog = _file.DbName
             };
             var dbConnection = builder.ConnectionString;
             await using var connection = new SqlConnection(dbConnection);
@@ -61,11 +69,11 @@ public class DbService(IConfiguration configuration, ReaderService readerService
     public async void Read()
     {
         Console.WriteLine("Fetching data from the database...");
-        foreach (var value in _file.tables)
+        foreach (var value in _file.Tables)
         {
             var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
             {
-                InitialCatalog = _file.dbName
+                InitialCatalog = _file.DbName
             };
 
             await using var connection = new SqlConnection(builder.ConnectionString);
@@ -86,7 +94,6 @@ public class DbService(IConfiguration configuration, ReaderService readerService
             foreach (var row in tablesRows) table.AddRow(row.ToArray());
             AnsiConsole.Write(table);
         }
-        Validation.EndMessage("");
     }
     public void IsValid()
     {
