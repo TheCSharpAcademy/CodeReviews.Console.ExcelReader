@@ -1,5 +1,6 @@
 ﻿using Spectre.Console;
 using System.Text.RegularExpressions;
+using OfficeOpenXml;
 
 namespace ExcelReader.TwilightSaw.Helper;
 
@@ -38,6 +39,25 @@ public class UserInput
     {
         variants.Add(backVariant);
         return AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[blue]Please, choose an option from the list below:[/]")
+            .PageSize(10)
+            .MoreChoicesText("[grey](Move up and down to reveal more categories[/]")
+            .AddChoices(variants));
+    }
+
+    public static ExcelRangeBase CreateChoosingList(List<ExcelRangeBase> variants)
+    {
+        return AnsiConsole.Prompt(new SelectionPrompt<ExcelRangeBase>()
+            .Title("[blue]Please, choose an option from the list below:[/]")
+            .PageSize(10)
+            .MoreChoicesText("[grey](Move up and down to reveal more categories[/]")
+            .UseConverter(r => $"{r.Value}")
+            .AddChoices(variants));
+    }
+
+    public static T CreateChoosingList<T>(List<T> variants)
+    {
+        return AnsiConsole.Prompt(new SelectionPrompt<T>()
             .Title("[blue]Please, choose an option from the list below:[/]")
             .PageSize(10)
             .MoreChoicesText("[grey](Move up and down to reveal more categories[/]")

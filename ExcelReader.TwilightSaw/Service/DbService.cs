@@ -95,15 +95,12 @@ public class DbService(IConfiguration configuration, ReaderService readerService
             AnsiConsole.Write(table);
         }
     }
-    public void IsValid()
+    public bool IsValid()
     {
-        if (_file == default)
-        {
-            Validation.EndMessage("Bad file format.");
-            return;
-        }
+        if (_file == default) return false;
         CreateDb();
         CreateTable();
         Read();
+        return true;
     }
 }

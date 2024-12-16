@@ -29,7 +29,6 @@ public class Validation
             AnsiConsole.MarkupLine($"[olive]{e.Message}[/]");
             return false;
         }
-        AnsiConsole.MarkupLine("[olive]Executed successfully[/]");
         return true;
     }
 

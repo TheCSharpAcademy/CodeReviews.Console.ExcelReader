@@ -16,12 +16,13 @@ public class ReaderService(string filePath)
             ".xlsx" => new ReaderXlsx(filePath).Read(),
             _ => default
         };
+        if (file == null) return null;
         file.DbName = Regex.Replace(file.DbName, @"[^a-zA-Z0-9_]", "");
         return file;
     }
 
-    public void Write(string text)
+    public void Write()
     {
-        new ReaderXlsx(filePath).Write(text);
+        new ReaderXlsx(filePath).Write();
     }
 }

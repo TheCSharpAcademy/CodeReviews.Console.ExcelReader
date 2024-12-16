@@ -11,7 +11,7 @@ public class ReaderController(IConfiguration configuration)
     {
         while(true)
         {
-            AnsiConsole.Write(new Rule("[olive]Supported formats - xlsx, csv, pdf, docx.[/]"));
+            AnsiConsole.Write(new Rule("[olive]Supported formats - xlsx, csv.[/]"));
             var inputRead = UserInput.Create("Input the path of the file: ");
             if (!File.Exists(inputRead))
             {
@@ -21,13 +21,16 @@ public class ReaderController(IConfiguration configuration)
             Console.Clear();
             var readerService = new ReaderService(inputRead);
             var dbService = new DbService(configuration, readerService);
-            dbService.IsValid();
+            var isValid = dbService.IsValid();
+            if(!isValid) {
+                Validation.EndMessage("Bad file format or some sheets are empty.");
+                continue;
+            }
             var inputConfirm = UserInput.CreateWithConfirm("Do you want to edit this file?");
             if (inputConfirm)
             {
-                AnsiConsole.Write(new Rule("[olive]First row - table columns, separation: xlsx, csv - space; docx, pdf - coma and space.[/]"));
-                var inputInsert = UserInput.Create("Your text: ");
-                readerService.Write(inputInsert);
+                Console.Clear();
+                readerService.Write();
             }
             Validation.EndMessage("");
         }
