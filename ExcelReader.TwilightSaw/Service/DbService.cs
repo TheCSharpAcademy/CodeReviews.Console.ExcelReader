@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using ExcelReader.TwilightSaw.Helper;
 using ExcelReader.TwilightSaw.Model;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -29,41 +28,46 @@ public class DbService(IConfiguration configuration, ReaderService readerService
         Console.WriteLine("Database created!");
     }
 
-    public async void CreateTable()
+    public bool CreateTable()
     {
         Console.WriteLine("Creating tables...");
-        foreach (var value in _file.Tables)
+        try
         {
-            var data = value.table.Select(i => i.ToList()).ToList();
-            for (var index = 0; index < data[0].Count; index++)
+            foreach (var value in _file.Tables)
             {
-                 data[0][index] = data[0][index].Replace(" ", "");
-                value.table[0][index] = data[0][index].Replace(" ", "");
-                data[0][index] += " TEXT";
+                var data = value.table.Select(i => i.ToList()).ToList();
+                for (var index = 0; index < data[0].Count; index++)
+                {
+                    data[0][index] = data[0][index].Replace(" ", "");
+                    value.table[0][index] = data[0][index].Replace(" ", "");
+                    data[0][index] += " TEXT";
+                }
 
-                Console.WriteLine($"Index {index}: {data[0][index]}");
+                var columns = string.Join(", ", data[0]);
+                var copiedColumns = string.Join(", ", value.table[0]);
+                var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
+                {
+                    InitialCatalog = _file.DbName
+                };
+                var dbConnection = builder.ConnectionString;
+                using var connection = new SqlConnection(dbConnection);
+
+                connection.Execute($"CREATE TABLE {value.tableName} ({columns});");
+                for (var index = 1; index < value.table.Count; index++)
+                {
+                    var cellsList = value.table[index].Select(t => $"'{t}'");
+                    var values = string.Join(", ", cellsList);
+                    var sql = @$"INSERT INTO {value.tableName} ({copiedColumns}) VALUES ({values});";
+                    connection.Execute(sql);
+                }
             }
-
-            var columns = string.Join(", ", data[0]);
-            var columns2 = string.Join(", ", value.table[0]);
-
-            var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
-            {
-                InitialCatalog = _file.DbName
-            };
-            var dbConnection = builder.ConnectionString;
-            await using var connection = new SqlConnection(dbConnection);
-
-            connection.Execute($"CREATE TABLE {value.tableName} ({columns});");
-            for (var index = 1; index < value.table.Count; index++)
-            {
-                var t1 = value.table[index].Select(t => $"'{t}'");
-                var values = string.Join(", ", t1);
-                var sql = @$"INSERT INTO {value.tableName} ({columns2}) VALUES ({values});";
-                connection.Execute(sql);
-            }
+            Console.WriteLine("Tables created!");
         }
-        Console.WriteLine("Tables created!");
+        catch (Exception e)
+        {
+            return false;
+        }
+        return true;
     }
 
     public async void Read()
@@ -86,7 +90,6 @@ public class DbService(IConfiguration configuration, ReaderService readerService
                             pair.Value.ToString()).
                         ToList()).
                 ToList();
-
             tablesColumns.AddRange(result[0].Keys);
 
             var table = new Table();
@@ -99,7 +102,7 @@ public class DbService(IConfiguration configuration, ReaderService readerService
     {
         if (_file == default) return false;
         CreateDb();
-        CreateTable();
+        if(!CreateTable()) return false; 
         Read();
         return true;
     }

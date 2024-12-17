@@ -11,7 +11,9 @@ public class ReaderController(IConfiguration configuration)
     {
         while(true)
         {
-            AnsiConsole.Write(new Rule("[olive]Supported formats - xlsx, csv.[/]"));
+            AnsiConsole.Write(new Rule("[lightyellow3]Welcome to the ExcelReader![/]"));
+            AnsiConsole.Write(new Rule("[olive]Read formats - xlsx, csv, docx, pdf; Write formats - xlsx.[/]"));
+            AnsiConsole.Write(new Rule("[gold3]Format - csv: coma, docx: coma and space, pdf: coma and space.[/]"));
             var inputRead = UserInput.Create("Input the path of the file: ");
             if (!File.Exists(inputRead))
             {
@@ -26,11 +28,14 @@ public class ReaderController(IConfiguration configuration)
                 Validation.EndMessage("Bad file format or some sheets are empty.");
                 continue;
             }
-            var inputConfirm = UserInput.CreateWithConfirm("Do you want to edit this file?");
-            if (inputConfirm)
+            if(Path.GetExtension(inputRead).ToLower() == ".xlsx")
             {
-                Console.Clear();
-                readerService.Write();
+                var inputConfirm = UserInput.CreateWithConfirm("Do you want to edit this file?");
+                if (inputConfirm)
+                {
+                    Console.Clear();
+                    readerService.Write();
+                }
             }
             Validation.EndMessage("");
         }
