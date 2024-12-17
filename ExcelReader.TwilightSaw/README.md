@@ -6,7 +6,7 @@
 - [x] Usage of the EPPlus package and SQL type server.
 - [x] Once the database is populated, data will be fetched from it and will be showed in the console.
 - [x] Printing messages to the console letting the user know what the app is doing at that moment.
-- [x] Files templates in the project.
+- [x] File templates in the project.
 
 ## Features
 * Simple UI to manage user file path inputs and(if it's possible) choices to edit the file.
